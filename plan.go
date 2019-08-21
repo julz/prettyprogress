@@ -4,12 +4,10 @@ import (
 	"fmt"
 )
 
+// Plan is a series of steps neccesary to complete the task
 type Plan []Step
 
-type Stringer interface {
-	String() string
-}
-
+// Bullet is a unicode status icon for each Step in a Plan
 type Bullet string
 
 const (
@@ -24,6 +22,7 @@ func (b Bullet) String() string {
 	return string(b)
 }
 
+// Step represents a single step of the Plan
 type Step struct {
 	Bullet fmt.Stringer
 	Name   string
