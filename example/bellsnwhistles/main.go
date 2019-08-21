@@ -54,11 +54,7 @@ func main() {
 			{
 				Name:   "Downloading..",
 				Bullet: downloadBullet,
-				Bar: prettyprogress.Bar{
-					Progress: progress,
-					Total:    100,
-					Width:    20,
-				},
+				Bar:    prettyprogress.NewBar(progress, 100),
 			},
 			{
 				Name:   "Scanning..",

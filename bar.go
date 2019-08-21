@@ -8,6 +8,16 @@ type Bar struct {
 	Width    int
 }
 
+const defaultWidth int = 20
+
+func NewBar(progress, total int) Bar {
+	return Bar{Progress: progress, Total: total, Width: defaultWidth}
+}
+
+func NewBarWithWidth(progress, total, width int) Bar {
+	return Bar{Progress: progress, Total: total, Width: width}
+}
+
 func (b Bar) String() string {
 	s := "["
 	for i := 0; i < b.Width; i++ {

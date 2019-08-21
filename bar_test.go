@@ -3,15 +3,18 @@ package prettyprogress_test
 import (
 	"testing"
 
+	"strings"
+
 	"github.com/julz/prettyprogress"
 	"gotest.tools/assert"
 )
 
 func TestBar(t *testing.T) {
 	examples := []struct {
-		Title  string
-		Bar    prettyprogress.Bar
-		Expect string
+		Title             string
+		Bar               prettyprogress.Bar
+		Expect            string
+		ExpectLastBarChar string
 	}{
 		{
 			Title:  "Simple empty bar",
@@ -48,10 +51,22 @@ func TestBar(t *testing.T) {
 			Expect: "[██▌  ]",
 			Bar:    prettyprogress.Bar{Progress: 2, Total: 4, Width: 5},
 		},
+		{
+			Title:  "Using full constructor",
+			Expect: "[██▌  ]",
+			Bar:    prettyprogress.NewBarWithWidth(2, 4, 5),
+		},
+		{
+			Title:  "Using convenience constructor with default width",
+			Expect: "[██████████          ]",
+			Bar:    prettyprogress.NewBar(2, 4),
+		},
 	}
 
 	for _, eg := range examples {
 		t.Run(eg.Title, func(t *testing.T) {
+			assert.Equal(t, len(eg.Expect), len(eg.Bar.String()), "correct length")
+			assert.Equal(t, strings.Trim(eg.Expect, "[] "), strings.Trim(eg.Bar.String(), "[] "), "correct filled section")
 			assert.Equal(t, eg.Expect, eg.Bar.String())
 		})
 	}
