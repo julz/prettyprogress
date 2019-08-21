@@ -10,7 +10,6 @@ import (
 
 func main() {
 	writer := uilive.New()
-	// start listening for updates and render
 	writer.Start()
 	defer writer.Stop()
 
