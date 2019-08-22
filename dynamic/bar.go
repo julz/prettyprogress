@@ -1,47 +1,30 @@
 package dynamic
 
 import (
-	"sync"
-
 	"github.com/julz/prettyprogress"
 )
 
-type Bar struct {
-	mu  sync.RWMutex
-	bar prettyprogress.Bar
+type Watcher func(s string)
 
-	wmu     sync.RWMutex
-	watcher func(prettyprogress.Bar)
+type ProgressUpdater interface {
+	Update(progress int)
 }
 
-func NewBar(total, width int) *Bar {
-	return &Bar{
-		bar:     prettyprogress.NewBarWithWidth(0, total, width),
-		watcher: func(prettyprogress.Bar) {},
+type BarUpdater struct {
+	total int
+	width int
+
+	watcher Watcher
+}
+
+func NewProgressUpdater(total, width int, w Watcher) *BarUpdater {
+	return &BarUpdater{
+		total:   total,
+		width:   width,
+		watcher: w,
 	}
 }
 
-func (b *Bar) Set(progress int) {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-
-	b.bar.Progress = progress
-
-	b.wmu.RLock()
-	defer b.wmu.RUnlock()
-	b.watcher(b.bar)
-}
-
-func (b *Bar) Watch(fn func(prettyprogress.Bar)) {
-	b.wmu.Lock()
-	defer b.wmu.Unlock()
-
-	b.watcher = fn
-}
-
-func (b *Bar) String() string {
-	b.mu.RLock()
-	defer b.mu.RUnlock()
-
-	return b.bar.String()
+func (b *BarUpdater) Update(progress int) {
+	b.watcher(prettyprogress.Bar{Progress: progress, Width: b.width, Total: b.total}.String())
 }

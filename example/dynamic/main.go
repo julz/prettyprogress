@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gosuri/uilive"
-	"github.com/julz/prettyprogress"
 	"github.com/julz/prettyprogress/dynamic"
 )
 
@@ -14,18 +13,17 @@ func main() {
 	w.Start()
 	defer w.Stop()
 
-	bar := dynamic.NewBar(100, 20)
-	bar.Watch(func(b prettyprogress.Bar) {
-		fmt.Fprintln(w, b.String())
+	bar := dynamic.NewProgressUpdater(100, 20, func(b string) {
+		fmt.Fprintln(w, b)
 		w.Flush()
 	})
 
 	doSomethingWithProgress(bar)
 }
 
-func doSomethingWithProgress(b *dynamic.Bar) {
+func doSomethingWithProgress(b dynamic.ProgressUpdater) {
 	for i := 0; i <= 100; i++ {
-		b.Set(i)
+		b.Update(i)
 		time.Sleep(5 * time.Millisecond)
 	}
 }
