@@ -17,7 +17,7 @@ func TestProgress(t *testing.T) {
 		{
 			Name:   "Downloading..",
 			Bullet: prettyprogress.Downloading,
-			Bar:    StringableString("[███         ]"),
+			Bar:    "[███         ]",
 		},
 		{
 			Name:   "Scanning..",

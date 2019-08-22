@@ -26,11 +26,11 @@ func (b Bullet) String() string {
 type Step struct {
 	Bullet fmt.Stringer
 	Name   string
-	Bar    fmt.Stringer
+	Bar    string
 }
 
 func (s Step) String() string {
-	return fmt.Sprintf(" %s  %s   %s", s.Bullet, s.Name, emptyIfNil(s.Bar))
+	return fmt.Sprintf(" %s  %s   %s", s.Bullet, s.Name, s.Bar)
 }
 
 func (p Plan) String() string {
@@ -40,12 +40,4 @@ func (p Plan) String() string {
 	}
 
 	return s
-}
-
-func emptyIfNil(s fmt.Stringer) string {
-	if s == nil {
-		return ""
-	}
-
-	return s.String()
 }
