@@ -1,4 +1,4 @@
-package dynamic
+package updater
 
 import (
 	"sync"
@@ -6,7 +6,7 @@ import (
 	"github.com/julz/prettyprogress"
 )
 
-type PlanUpdater struct {
+type Plan struct {
 	watcher Watcher
 
 	barWidth int
@@ -15,20 +15,20 @@ type PlanUpdater struct {
 	steps prettyprogress.Plan
 }
 
-func NewMultistepUpdater(barWidth int, watcher Watcher) *PlanUpdater {
-	return &PlanUpdater{
+func NewMultistep(barWidth int, watcher Watcher) *Plan {
+	return &Plan{
 		barWidth: barWidth,
 		watcher:  watcher,
 	}
 }
 
-func (p *PlanUpdater) AddStep(total int) *StepUpdater {
+func (p *Plan) AddStep(total int) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)
 	p.steps = append(p.steps, prettyprogress.Step{Bullet: prettyprogress.Future})
 	p.mu.Unlock()
 
-	return &StepUpdater{
+	return &Step{
 		barWidth: p.barWidth,
 		barTotal: total,
 		watcher: func(s prettyprogress.Step) {

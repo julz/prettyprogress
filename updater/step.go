@@ -1,8 +1,8 @@
-package dynamic
+package updater
 
 import "github.com/julz/prettyprogress"
 
-type StepUpdater struct {
+type Step struct {
 	barWidth int
 	barTotal int
 
@@ -16,20 +16,20 @@ type StatusUpdater interface {
 	UpdateProgress(bullet prettyprogress.Bullet, status string, progress int)
 }
 
-func NewStatusUpdater(barTotal, barWidth int, w Watcher) *StepUpdater {
-	return &StepUpdater{
+func NewStep(barTotal, barWidth int, w Watcher) *Step {
+	return &Step{
 		barWidth: barWidth,
 		barTotal: barTotal,
 		watcher:  func(s prettyprogress.Step) { w(s.String()) },
 	}
 }
 
-func (b *StepUpdater) UpdateStatus(bullet prettyprogress.Bullet, status string) {
+func (b *Step) UpdateStatus(bullet prettyprogress.Bullet, status string) {
 	b.update(bullet, status, "")
 }
 
-func (b *StepUpdater) Bar(bullet prettyprogress.Bullet, status string) *BarUpdater {
-	return NewProgressUpdater(
+func (b *Step) Bar(bullet prettyprogress.Bullet, status string) *Bar {
+	return NewBar(
 		b.barTotal,
 		b.barWidth,
 		func(s string) {
@@ -38,7 +38,7 @@ func (b *StepUpdater) Bar(bullet prettyprogress.Bullet, status string) *BarUpdat
 	)
 }
 
-func (b *StepUpdater) UpdateProgress(bullet prettyprogress.Bullet, status string, progress int) {
+func (b *Step) UpdateProgress(bullet prettyprogress.Bullet, status string, progress int) {
 	b.update(bullet, status, prettyprogress.Bar{
 		Width:    b.barWidth,
 		Total:    b.barTotal,
@@ -46,7 +46,7 @@ func (b *StepUpdater) UpdateProgress(bullet prettyprogress.Bullet, status string
 	}.String())
 }
 
-func (b *StepUpdater) update(bullet prettyprogress.Bullet, status, bar string) {
+func (b *Step) update(bullet prettyprogress.Bullet, status, bar string) {
 	b.watcher(prettyprogress.Step{
 		Bullet: bullet,
 		Name:   status,

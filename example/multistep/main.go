@@ -6,7 +6,7 @@ import (
 
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
-	"github.com/julz/prettyprogress/dynamic"
+	"github.com/julz/prettyprogress/updater"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		w.Flush()
 	}
 
-	multiStep := dynamic.NewMultistepUpdater(20, watcher)
+	multiStep := updater.NewMultistep(20, watcher)
 	step1 := multiStep.AddStep(100)
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)
@@ -43,14 +43,14 @@ func main() {
 	<-ch
 }
 
-func doSomethingWithProgress(b dynamic.ProgressUpdater) {
+func doSomethingWithProgress(b updater.ProgressUpdater) {
 	for i := 0; i <= 100; i++ {
 		b.UpdateProgress(i)
 		time.Sleep(5 * time.Millisecond)
 	}
 }
 
-func doSomethingWithProgressAndStatus(b dynamic.StatusUpdater) {
+func doSomethingWithProgressAndStatus(b updater.StatusUpdater) {
 	for i := 0; i <= 100; i++ {
 		b.UpdateProgress(prettyprogress.Downloading, fmt.Sprintf("Progressing %d", i), i)
 		time.Sleep(5 * time.Millisecond)

@@ -1,16 +1,16 @@
-package dynamic_test
+package updater_test
 
 import (
 	"testing"
 
 	"github.com/julz/prettyprogress"
-	"github.com/julz/prettyprogress/dynamic"
+	"github.com/julz/prettyprogress/updater"
 	"gotest.tools/assert"
 )
 
 func TestMultistep(t *testing.T) {
 	var recieved []string
-	steps := dynamic.NewMultistepUpdater(20, func(s string) {
+	steps := updater.NewMultistep(20, func(s string) {
 		recieved = append(recieved, s)
 	})
 
