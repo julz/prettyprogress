@@ -19,29 +19,24 @@ func main() {
 		w.Flush()
 	}
 
-	bar := dynamic.NewProgressUpdater(100, 20, watcher)
-	doSomethingWithProgress(bar)
-
-	step := dynamic.NewStatusUpdater(100, 20, watcher)
-	doSomethingWithProgressAndStatus(step)
-
 	multiStep := dynamic.NewMultistepUpdater(20, watcher)
 	step1 := multiStep.AddStep(100)
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)
 
-	step1.Update(prettyprogress.Running, "Running..")
-	step2.Update(prettyprogress.Running, "Running..")
-	step3.Update(prettyprogress.Running, "Running..")
+	step1.UpdateStatus(prettyprogress.Running, "Running..")
+	step2.UpdateStatus(prettyprogress.Running, "Running..")
+	step3.UpdateStatus(prettyprogress.Running, "Running..")
 
-	doSomethingWithProgressAndStatus(step2)
-	step3.Update(prettyprogress.Complete, "Done-zo")
-	step2.Update(prettyprogress.Complete, "Done-zo")
+	doSomethingWithProgress(step2.Bar(prettyprogress.Downloading, "Downloading.."))
+	step2.UpdateStatus(prettyprogress.Complete, "Done-zo")
+
+	step3.UpdateStatus(prettyprogress.Complete, "Done-zo")
 
 	ch := make(chan struct{})
 	go func() {
 		time.Sleep(1 * time.Second)
-		step1.Update(prettyprogress.Complete, "Complete")
+		step1.UpdateStatus(prettyprogress.Complete, "Done-zo")
 		close(ch)
 	}()
 
@@ -50,7 +45,7 @@ func main() {
 
 func doSomethingWithProgress(b dynamic.ProgressUpdater) {
 	for i := 0; i <= 100; i++ {
-		b.Update(i)
+		b.UpdateProgress(i)
 		time.Sleep(5 * time.Millisecond)
 	}
 }

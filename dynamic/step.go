@@ -12,7 +12,7 @@ type StepUpdater struct {
 type stepWatcher func(s prettyprogress.Step)
 
 type StatusUpdater interface {
-	Update(bullet prettyprogress.Bullet, status string)
+	UpdateStatus(bullet prettyprogress.Bullet, status string)
 	UpdateProgress(bullet prettyprogress.Bullet, status string, progress int)
 }
 
@@ -24,8 +24,18 @@ func NewStatusUpdater(barTotal, barWidth int, w Watcher) *StepUpdater {
 	}
 }
 
-func (b *StepUpdater) Update(bullet prettyprogress.Bullet, status string) {
+func (b *StepUpdater) UpdateStatus(bullet prettyprogress.Bullet, status string) {
 	b.update(bullet, status, "")
+}
+
+func (b *StepUpdater) Bar(bullet prettyprogress.Bullet, status string) *BarUpdater {
+	return NewProgressUpdater(
+		b.barTotal,
+		b.barWidth,
+		func(s string) {
+			b.update(bullet, status, s)
+		},
+	)
 }
 
 func (b *StepUpdater) UpdateProgress(bullet prettyprogress.Bullet, status string, progress int) {

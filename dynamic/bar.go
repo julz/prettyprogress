@@ -7,7 +7,7 @@ import (
 type Watcher func(s string)
 
 type ProgressUpdater interface {
-	Update(progress int)
+	UpdateProgress(progress int)
 }
 
 type BarUpdater struct {
@@ -25,6 +25,6 @@ func NewProgressUpdater(total, width int, w Watcher) *BarUpdater {
 	}
 }
 
-func (b *BarUpdater) Update(progress int) {
+func (b *BarUpdater) UpdateProgress(progress int) {
 	b.watcher(prettyprogress.Bar{Progress: progress, Width: b.width, Total: b.total}.String())
 }
