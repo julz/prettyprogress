@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// Steps is a series of steps neccesary to complete the task, w
+// Steps is a series of steps neccesary to complete the task
 type Steps []Step
 
 // String outputs the set of steps as a nicely formatted String
@@ -34,7 +34,7 @@ func (s Step) String() string {
 	return fmt.Sprintf(" %s  %s%s", s.Bullet, s.Name, bar)
 }
 
-// Bullet is a unicode status icon for each Step in a Plan
+// Bullet is a unicode status icon for a Step
 type Bullet string
 
 const (

@@ -43,16 +43,9 @@ func main() {
 	<-ch
 }
 
-func doSomethingWithProgress(b updater.ProgressUpdater) {
+func doSomethingWithProgress(b interface{ UpdateProgress(int) }) {
 	for i := 0; i <= 100; i++ {
 		b.UpdateProgress(i)
-		time.Sleep(5 * time.Millisecond)
-	}
-}
-
-func doSomethingWithProgressAndStatus(b updater.StatusUpdater) {
-	for i := 0; i <= 100; i++ {
-		b.UpdateProgress(prettyprogress.Downloading, fmt.Sprintf("Progressing %d", i), i)
 		time.Sleep(5 * time.Millisecond)
 	}
 }

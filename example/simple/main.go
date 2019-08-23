@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/gosuri/uilive"
@@ -27,6 +28,7 @@ func main() {
 			{
 				Name:   "Scanning..",
 				Bullet: prettyprogress.Running,
+				Bar:    prettyprogress.NewBar(int(math.Min(float64(i), 50)), 50).String(),
 			},
 			{
 				Name:   "Waiting to Start..",
