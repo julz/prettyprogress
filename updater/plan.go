@@ -22,6 +22,12 @@ func NewMultistep(barWidth int, watcher Watcher) *Plan {
 	}
 }
 
+func (p *Plan) AddStepWithStatus(status string, total int) *Step {
+	s := p.AddStep(total)
+	s.UpdateStatus(prettyprogress.Future, status)
+	return s
+}
+
 func (p *Plan) AddStep(total int) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)

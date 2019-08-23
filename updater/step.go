@@ -24,6 +24,18 @@ func NewStep(barTotal, barWidth int, w Watcher) *Step {
 	}
 }
 
+func (b *Step) Fail(msg string) {
+	b.UpdateStatus(prettyprogress.Failed, msg)
+}
+
+func (b *Step) Complete(msg string) {
+	b.UpdateStatus(prettyprogress.Complete, msg)
+}
+
+func (b *Step) Start(msg string) {
+	b.UpdateStatus(prettyprogress.Running, msg)
+}
+
 func (b *Step) UpdateStatus(bullet prettyprogress.Bullet, status string) {
 	b.update(bullet, status, "")
 }
