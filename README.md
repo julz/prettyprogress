@@ -1,4 +1,9 @@
+prettyprogress
+====
+
 a tiny library for printing nice-looking console progress
+
+[![GoDoc](https://godoc.org/github.com/julz/prettyprogress?status.png)](https://godoc.org/github.com/julz/prettyprogress)
 
 # Quick Start
 
