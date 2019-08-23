@@ -6,29 +6,29 @@ import (
 	"github.com/julz/prettyprogress"
 )
 
-type Plan struct {
+type Steps struct {
 	watcher Watcher
 
 	barWidth int
 
 	mu    sync.Mutex
-	steps prettyprogress.Plan
+	steps prettyprogress.Steps
 }
 
-func NewMultistep(barWidth int, watcher Watcher) *Plan {
-	return &Plan{
+func NewMultistep(barWidth int, watcher Watcher) *Steps {
+	return &Steps{
 		barWidth: barWidth,
 		watcher:  watcher,
 	}
 }
 
-func (p *Plan) AddStepWithStatus(status string, total int) *Step {
+func (p *Steps) AddStepWithStatus(status string, total int) *Step {
 	s := p.AddStep(total)
 	s.UpdateStatus(prettyprogress.Future, status)
 	return s
 }
 
-func (p *Plan) AddStep(total int) *Step {
+func (p *Steps) AddStep(total int) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)
 	p.steps = append(p.steps, prettyprogress.Step{Bullet: prettyprogress.Future})

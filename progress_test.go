@@ -9,7 +9,7 @@ import (
 )
 
 func TestProgress(t *testing.T) {
-	a := prettyprogress.Plan{
+	a := prettyprogress.Steps{
 		{
 			Name:   "Building..",
 			Bullet: prettyprogress.Complete,

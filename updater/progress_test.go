@@ -22,7 +22,7 @@ func TestMultistep(t *testing.T) {
 	step1.UpdateProgress(prettyprogress.Downloading, "updated", 12)
 
 	assert.DeepEqual(t, recieved, []string{
-		prettyprogress.Plan{
+		prettyprogress.Steps{
 			{
 				Bullet: prettyprogress.Running,
 				Name:   "hello",
@@ -32,7 +32,7 @@ func TestMultistep(t *testing.T) {
 				Name:   "",
 			},
 		}.String(),
-		prettyprogress.Plan{
+		prettyprogress.Steps{
 			{
 				Bullet: prettyprogress.Running,
 				Name:   "hello",
@@ -42,7 +42,7 @@ func TestMultistep(t *testing.T) {
 				Name:   "bye",
 			},
 		}.String(),
-		prettyprogress.Plan{
+		prettyprogress.Steps{
 			{
 				Bullet: prettyprogress.Downloading,
 				Name:   "updated",

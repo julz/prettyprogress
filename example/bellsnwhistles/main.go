@@ -46,7 +46,7 @@ func main() {
 			startingText = "Done"
 		}
 
-		fmt.Fprint(writer, prettyprogress.Plan{
+		fmt.Fprint(writer, prettyprogress.Steps{
 			{
 				Name:   "Building..",
 				Bullet: buildBullet,

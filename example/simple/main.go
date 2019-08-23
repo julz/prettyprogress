@@ -14,7 +14,7 @@ func main() {
 	defer writer.Stop()
 
 	for i := 0; i < 100; i++ {
-		fmt.Fprint(writer, prettyprogress.Plan{
+		fmt.Fprint(writer, prettyprogress.Steps{
 			{
 				Name:   "Building..",
 				Bullet: prettyprogress.Complete,
