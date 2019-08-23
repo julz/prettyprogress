@@ -24,21 +24,21 @@ func main() {
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)
 
-	step1.UpdateStatus(prettyprogress.Running, "Running..")
-	step2.UpdateStatus(prettyprogress.Running, "Running..")
-	step3.UpdateStatus(prettyprogress.Running, "Running..")
-
-	doSomethingWithProgress(step2.Bar(prettyprogress.Downloading, "Downloading.."))
-	step2.UpdateStatus(prettyprogress.Complete, "Done-zo")
-
-	step3.UpdateStatus(prettyprogress.Complete, "Done-zo")
+	step1.Start("Running..")
+	step2.Start("Running..")
+	step3.Start("Running..")
 
 	ch := make(chan struct{})
 	go func() {
-		time.Sleep(1 * time.Second)
-		step1.UpdateStatus(prettyprogress.Complete, "Done-zo")
+		time.Sleep(200 * time.Millisecond)
+		doSomethingWithProgress(step1.Bar(prettyprogress.Downloading, "Downloading.."))
+		step1.Complete("Done-zo")
 		close(ch)
 	}()
+
+	doSomethingWithProgress(step2.Bar(prettyprogress.Uploading, "Uploading.."))
+	step2.Complete("Done-zo")
+	step3.Complete("Complete!")
 
 	<-ch
 }
