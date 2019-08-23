@@ -30,10 +30,10 @@ func TestProgress(t *testing.T) {
 	}
 
 	assert.Equal(t, fmt.Sprintf("%s", a), `
- ✓  Building..   
+ ✓  Building..
  ↡  Downloading..   [███         ]
- ►  Scanning..   
-    Waiting..   
+ ►  Scanning..
+    Waiting..
 `)
 }
 

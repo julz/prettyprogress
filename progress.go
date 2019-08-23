@@ -26,7 +26,12 @@ type Step struct {
 
 // String outputs the Step as a nicely formatted String
 func (s Step) String() string {
-	return fmt.Sprintf(" %s  %s   %s", s.Bullet, s.Name, s.Bar)
+	bar := ""
+	if s.Bar != "" {
+		bar = "   " + s.Bar
+	}
+
+	return fmt.Sprintf(" %s  %s%s", s.Bullet, s.Name, bar)
 }
 
 // Bullet is a unicode status icon for each Step in a Plan
