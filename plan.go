@@ -11,6 +11,7 @@ type Plan []Step
 type Bullet string
 
 const (
+	Failed      Bullet = "⚠"
 	Future      Bullet = " "
 	Running     Bullet = "►"
 	Downloading Bullet = "↡"
