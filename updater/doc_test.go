@@ -1,14 +1,14 @@
 package updater_test
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/julz/prettyprogress"
 	"github.com/julz/prettyprogress/updater"
 )
 
 func Example() {
-	multiStep := updater.NewMultistep(20, Println)
+	multiStep := updater.NewMultistep(20, updater.Write(os.Stdout))
 	step1 := multiStep.AddStep(100)
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)
@@ -23,7 +23,7 @@ func Example() {
 }
 
 func ExampleStep_Bar() {
-	step := updater.NewStep(100, 5, Println)
+	step := updater.NewStep(100, 5, updater.Writeln(os.Stdout))
 	step.UpdateStatus(prettyprogress.Running, "Preparing")
 
 	bar := step.Bar(prettyprogress.Downloading, "Downloading")
@@ -34,8 +34,4 @@ func ExampleStep_Bar() {
 	//  ↡  Downloading   [█    ]
 	//  ↡  Downloading   [████ ]
 	//  ↡  Downloading   [█████]
-}
-
-func Println(s string) {
-	fmt.Println(s)
 }
