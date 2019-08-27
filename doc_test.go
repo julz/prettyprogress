@@ -29,7 +29,7 @@ func Example() {
 	})
 	// Output:
 	//  ✓  Building..
-	//  ↡  Downloading..   [██                  ]
-	//  ►  Scanning..   [████                ]
+	//  ↡  Downloading..        [██                  ]
+	//  ►  Scanning..           [████                ]
 	//     Waiting to Start..
 }

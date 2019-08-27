@@ -2,6 +2,7 @@ package prettyprogress
 
 import (
 	"fmt"
+	"strings"
 )
 
 // Steps is a series of steps neccesary to complete the task
@@ -9,8 +10,16 @@ type Steps []Step
 
 // String outputs the set of steps as a nicely formatted String
 func (p Steps) String() string {
+	longestName := 0
+	for _, step := range p {
+		if len(step.Name) > longestName {
+			longestName = len(step.Name)
+		}
+	}
+
 	s := "\n"
 	for _, step := range p {
+		step.paddedName = step.Name + strings.Repeat(" ", longestName-len(step.Name))
 		s += step.String() + "\n"
 	}
 
@@ -22,16 +31,22 @@ type Step struct {
 	Bullet fmt.Stringer
 	Name   string
 	Bar    string
+
+	paddedName string
 }
 
 // String outputs the Step as a nicely formatted String
 func (s Step) String() string {
-	bar := ""
-	if s.Bar != "" {
-		bar = "   " + s.Bar
+	if s.paddedName == "" {
+		s.paddedName = s.Name
 	}
 
-	return fmt.Sprintf(" %s  %s%s", s.Bullet, s.Name, bar)
+	name := s.Name
+	if s.Bar != "" {
+		name = s.paddedName + "   "
+	}
+
+	return fmt.Sprintf(" %s  %s%s", s.Bullet, name, s.Bar)
 }
 
 // Bullet is a unicode status icon for a Step
