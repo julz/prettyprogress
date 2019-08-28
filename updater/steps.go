@@ -9,17 +9,25 @@ import (
 type Steps struct {
 	watcher Watcher
 
-	barWidth int
+	barWidth     int
+	bulletColors map[string]func(a ...interface{}) string
 
 	mu    sync.Mutex
 	steps prettyprogress.Steps
 }
 
-func NewMultistep(barWidth int, watcher Watcher) *Steps {
-	return &Steps{
-		barWidth: barWidth,
-		watcher:  watcher,
+func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
+	s := &Steps{
+		bulletColors: make(map[string]func(a ...interface{}) string),
+		barWidth:     20,
+		watcher:      watcher,
 	}
+
+	for _, option := range options {
+		option(s)
+	}
+
+	return s
 }
 
 func (p *Steps) AddStepWithStatus(status string, total int) *Step {
@@ -35,6 +43,8 @@ func (p *Steps) AddStep(total int) *Step {
 	p.mu.Unlock()
 
 	return &Step{
+		bulletColors: p.bulletColors,
+
 		barWidth: p.barWidth,
 		barTotal: total,
 		watcher: func(s prettyprogress.Step) {
@@ -44,5 +54,19 @@ func (p *Steps) AddStep(total int) *Step {
 			p.steps[stepIndex] = s
 			p.watcher(p.steps.String())
 		},
+	}
+}
+
+type StepsOption func(s *Steps)
+
+func WithBulletColor(bullet prettyprogress.Bullet, color func(...interface{}) string) func(s *Steps) {
+	return func(s *Steps) {
+		s.bulletColors[bullet.String()] = color
+	}
+}
+
+func WithBarWidth(width int) func(s *Steps) {
+	return func(s *Steps) {
+		s.barWidth = width
 	}
 }

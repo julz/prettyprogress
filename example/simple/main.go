@@ -5,6 +5,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/gookit/color"
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
 )
@@ -17,8 +18,9 @@ func main() {
 	for i := 0; i < 100; i++ {
 		fmt.Fprint(writer, prettyprogress.Steps{
 			{
-				Name:   "Building..",
-				Bullet: prettyprogress.Complete,
+				Name:            "Building..",
+				Bullet:          prettyprogress.Complete,
+				BulletColorFunc: color.New(color.FgGreen).Render,
 			},
 			{
 				Name:   "Downloading..",

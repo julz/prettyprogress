@@ -28,9 +28,11 @@ func (p Steps) String() string {
 
 // Step represents a single step
 type Step struct {
-	Bullet fmt.Stringer
-	Name   string
-	Bar    string
+	Bullet          fmt.Stringer
+	BulletColorFunc func(...interface{}) string
+
+	Name string
+	Bar  string
 
 	paddedName string
 }
@@ -46,7 +48,12 @@ func (s Step) String() string {
 		name = s.paddedName + "   "
 	}
 
-	return fmt.Sprintf(" %s  %s%s", s.Bullet, name, s.Bar)
+	bullet := s.Bullet.String()
+	if s.BulletColorFunc != nil {
+		bullet = s.BulletColorFunc(s.Bullet.String())
+	}
+
+	return fmt.Sprintf(" %s  %s%s", bullet, name, s.Bar)
 }
 
 // Bullet is a unicode status icon for a Step

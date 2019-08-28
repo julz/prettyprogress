@@ -70,6 +70,25 @@ func TestProgress(t *testing.T) {
 				    Waiting..
 			`),
 		},
+		{
+			Title: "Colored bullets",
+			Steps: prettyprogress.Steps{
+				{
+					Name:   "Building..",
+					Bullet: prettyprogress.Complete,
+					BulletColorFunc: func(s ...interface{}) string {
+						assert.DeepEqual(t, s, []interface{}{
+							"✓",
+						})
+
+						return "C"
+					},
+				},
+			},
+			Expect: withoutPadding(`
+				 C  Building..
+			`),
+		},
 	}
 
 	for _, eg := range examples {

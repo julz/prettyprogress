@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
 	"github.com/julz/prettyprogress/updater"
@@ -14,12 +14,13 @@ func main() {
 	w.Start()
 	defer w.Stop()
 
-	watcher := func(s string) {
-		fmt.Fprintln(w, s)
-		w.Flush()
-	}
+	multiStep := updater.NewMultistep(
+		updater.Writeln(w),
+		updater.WithBulletColor(
+			prettyprogress.Complete, color.New(color.FgGreen).Sprint,
+		),
+	)
 
-	multiStep := updater.NewMultistep(20, watcher)
 	step1 := multiStep.AddStep(100)
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)

@@ -6,8 +6,9 @@ import "github.com/julz/prettyprogress"
 // prettyprogress.Step's String() method whenever its UpdateStatus method is
 // called
 type Step struct {
-	barWidth int
-	barTotal int
+	bulletColors map[string]func(a ...interface{}) string
+	barWidth     int
+	barTotal     int
 
 	watcher stepWatcher
 }
@@ -77,8 +78,9 @@ func (b *Step) UpdateProgress(bullet prettyprogress.Bullet, status string, progr
 
 func (b *Step) update(bullet prettyprogress.Bullet, status, bar string) {
 	b.watcher(prettyprogress.Step{
-		Bullet: bullet,
-		Name:   status,
-		Bar:    bar,
+		Bullet:          bullet,
+		BulletColorFunc: b.bulletColors[bullet.String()],
+		Name:            status,
+		Bar:             bar,
 	})
 }

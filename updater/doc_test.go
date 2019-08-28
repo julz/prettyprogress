@@ -8,7 +8,7 @@ import (
 )
 
 func Example() {
-	multiStep := updater.NewMultistep(20, updater.Write(os.Stdout))
+	multiStep := updater.NewMultistep(updater.Write(os.Stdout), updater.WithBarWidth(20))
 	step1 := multiStep.AddStep(100)
 	step2 := multiStep.AddStep(100)
 	step3 := multiStep.AddStep(100)

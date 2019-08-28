@@ -1,6 +1,7 @@
 package updater_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/julz/prettyprogress"
@@ -10,9 +11,12 @@ import (
 
 func TestMultistep(t *testing.T) {
 	var recieved []string
-	steps := updater.NewMultistep(20, func(s string) {
-		recieved = append(recieved, s)
-	})
+	steps := updater.NewMultistep(
+		func(s string) {
+			recieved = append(recieved, s)
+		},
+		updater.WithBarWidth(20),
+	)
 
 	step1 := steps.AddStep(100)
 	step2 := steps.AddStep(10)
@@ -50,6 +54,69 @@ func TestMultistep(t *testing.T) {
 			},
 			{
 				Bullet: prettyprogress.Complete,
+				Name:   "bye",
+			},
+		}.String(),
+	})
+}
+
+func TestMultistepWithColor(t *testing.T) {
+	var recieved []string
+	steps := updater.NewMultistep(
+		func(s string) {
+			recieved = append(recieved, s)
+		},
+		updater.WithBarWidth(20),
+		updater.WithBulletColor(
+			prettyprogress.Downloading,
+			func(s ...interface{}) string {
+				return "ORANGE<" + fmt.Sprint(s...) + ">"
+			},
+		),
+		updater.WithBulletColor(
+			prettyprogress.Complete,
+			func(s ...interface{}) string {
+				return "GREEN<" + fmt.Sprint(s...) + ">"
+			},
+		),
+	)
+
+	step1 := steps.AddStep(100)
+	step2 := steps.AddStep(10)
+
+	step1.UpdateStatus(prettyprogress.Running, "hello")
+	step2.UpdateStatus(prettyprogress.Complete, "bye")
+	step1.UpdateProgress(prettyprogress.Downloading, "updated", 12)
+
+	assert.DeepEqual(t, recieved, []string{
+		prettyprogress.Steps{
+			{
+				Bullet: prettyprogress.Running,
+				Name:   "hello",
+			},
+			{
+				Bullet: prettyprogress.Future,
+				Name:   "",
+			},
+		}.String(),
+		prettyprogress.Steps{
+			{
+				Bullet: prettyprogress.Running,
+				Name:   "hello",
+			},
+			{
+				Bullet: "GREEN<" + prettyprogress.Complete + ">",
+				Name:   "bye",
+			},
+		}.String(),
+		prettyprogress.Steps{
+			{
+				Bullet: "ORANGE<" + prettyprogress.Downloading + ">",
+				Name:   "updated",
+				Bar:    prettyprogress.NewBarWithWidth(12, 100, 20).String(),
+			},
+			{
+				Bullet: "GREEN<" + prettyprogress.Complete + ">",
 				Name:   "bye",
 			},
 		}.String(),
