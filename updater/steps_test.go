@@ -18,8 +18,8 @@ func TestMultistep(t *testing.T) {
 		updater.WithBarWidth(20),
 	)
 
-	step1 := steps.AddStep(100)
-	step2 := steps.AddStep(10)
+	step1 := steps.AddStep(updater.WithBarTotal(100))
+	step2 := steps.AddStep()
 
 	step1.UpdateStatus(prettyprogress.Running, "hello")
 	step2.UpdateStatus(prettyprogress.Complete, "bye")
@@ -81,8 +81,8 @@ func TestMultistepWithColor(t *testing.T) {
 		),
 	)
 
-	step1 := steps.AddStep(100)
-	step2 := steps.AddStep(10)
+	step1 := steps.AddStep(updater.WithBarTotal(100))
+	step2 := steps.AddStep()
 
 	step1.UpdateStatus(prettyprogress.Running, "hello")
 	step2.UpdateStatus(prettyprogress.Complete, "bye")

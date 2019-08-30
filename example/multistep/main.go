@@ -21,9 +21,9 @@ func main() {
 		),
 	)
 
-	step1 := multiStep.AddStep(1000)
-	step2 := multiStep.AddStep(1000)
-	step3 := multiStep.AddStep(100)
+	step1 := multiStep.AddStep(updater.WithBarTotal(1000))
+	step2 := multiStep.AddStep(updater.WithBarTotal(1000))
+	step3 := multiStep.AddStep()
 
 	step1.Start("Running..")
 	step2.Start("Running..")

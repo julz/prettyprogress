@@ -9,9 +9,9 @@ import (
 
 func Example() {
 	multiStep := updater.NewMultistep(updater.Write(os.Stdout), updater.WithBarWidth(20))
-	step1 := multiStep.AddStep(100)
-	step2 := multiStep.AddStep(100)
-	step3 := multiStep.AddStep(100)
+	step1 := multiStep.AddStep()
+	step2 := multiStep.AddStep()
+	step3 := multiStep.AddStep()
 
 	step1.Start("Running..")
 	step1.Complete("Complete")

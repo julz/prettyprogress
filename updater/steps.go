@@ -6,6 +6,8 @@ import (
 	"github.com/julz/prettyprogress"
 )
 
+const defaultBarTotal = 100
+
 type Steps struct {
 	watcher Watcher
 
@@ -16,6 +18,8 @@ type Steps struct {
 	steps prettyprogress.Steps
 }
 
+// NewMultistep creates a new updater that can have multiple sub-steps. When any of the steps
+// are updated, the Watcher is called with the new string to display.
 func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 	s := &Steps{
 		bulletColors: make(map[string]func(a ...interface{}) string),
@@ -30,23 +34,18 @@ func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 	return s
 }
 
-func (p *Steps) AddStepWithStatus(status string, total int) *Step {
-	s := p.AddStep(total)
-	s.UpdateStatus(prettyprogress.Future, status)
-	return s
-}
-
-func (p *Steps) AddStep(total int) *Step {
+// AddStep adds a sub-step to the display
+func (p *Steps) AddStep(options ...StepOption) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)
 	p.steps = append(p.steps, prettyprogress.Step{Bullet: prettyprogress.Future})
 	p.mu.Unlock()
 
-	return &Step{
+	s := &Step{
 		bulletColors: p.bulletColors,
 
 		barWidth: p.barWidth,
-		barTotal: total,
+		barTotal: defaultBarTotal,
 		watcher: func(s prettyprogress.Step) {
 			p.mu.Lock()
 			defer p.mu.Unlock()
@@ -55,6 +54,12 @@ func (p *Steps) AddStep(total int) *Step {
 			p.watcher(p.steps.String())
 		},
 	}
+
+	for _, o := range options {
+		o(s)
+	}
+
+	return s
 }
 
 type StepsOption func(s *Steps)
@@ -68,5 +73,19 @@ func WithBulletColor(bullet prettyprogress.Bullet, color func(...interface{}) st
 func WithBarWidth(width int) func(s *Steps) {
 	return func(s *Steps) {
 		s.barWidth = width
+	}
+}
+
+type StepOption func(s *Step)
+
+func WithBarTotal(total int) func(s *Step) {
+	return func(s *Step) {
+		s.barTotal = total
+	}
+}
+
+func WithStatus(msg string) func(S *Step) {
+	return func(s *Step) {
+		s.UpdateStatus(prettyprogress.Future, msg)
 	}
 }
