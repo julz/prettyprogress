@@ -21,8 +21,8 @@ func main() {
 		),
 	)
 
-	step1 := multiStep.AddStep(100)
-	step2 := multiStep.AddStep(100)
+	step1 := multiStep.AddStep(1000)
+	step2 := multiStep.AddStep(1000)
 	step3 := multiStep.AddStep(100)
 
 	step1.Start("Running..")
@@ -31,7 +31,7 @@ func main() {
 
 	ch := make(chan struct{})
 	go func() {
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 		doSomethingWithProgress(step1.Bar(prettyprogress.Downloading, "Downloading.."))
 		step1.Complete("Done-zo")
 		close(ch)
@@ -45,8 +45,8 @@ func main() {
 }
 
 func doSomethingWithProgress(b interface{ UpdateProgress(int) }) {
-	for i := 0; i <= 100; i++ {
+	for i := 0; i <= 1010; i++ {
 		b.UpdateProgress(i)
-		time.Sleep(5 * time.Millisecond)
+		time.Sleep(2 * time.Millisecond)
 	}
 }

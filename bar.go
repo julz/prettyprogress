@@ -1,6 +1,9 @@
 package prettyprogress
 
-import "math"
+import (
+	"math"
+	"strings"
+)
 
 // Bar is a simple progress bar struct that knows how to String() itself in a pretty way
 type Bar struct {
@@ -23,17 +26,45 @@ func NewBarWithWidth(progress, total, width int) Bar {
 
 // String stringifies the Bar to a nice-looking unicode string
 func (b Bar) String() string {
-	s := "["
-	for i := 0; i < b.Width; i++ {
-		if float64(i) < math.Floor(float64(b.Progress)*(float64(b.Width)/float64(b.Total))) {
-			s += "█"
-		} else if float64(i) < float64(b.Progress)*(float64(b.Width)/float64(b.Total)) {
-			s += "▌"
-		} else {
-			s += " "
-		}
+	fractions := []string{
+		" ",
+		"▏",
+		"▎",
+		"▍",
+		"▌",
+		"▋",
+		"▊",
+		"▉",
+		"█",
 	}
-	s += "]"
 
+	progress := b.Progress
+	if b.Progress > b.Total {
+		progress = b.Total
+	}
+
+	s := "["
+
+	// scaledProgress is progress between 0 and width (rather than 0 and total)
+	scaledProgress := float64(progress) * (float64(b.Width) / float64(b.Total))
+
+	// split in to whole-sized cells and fractional part
+	// we can paint all the whole-sized cells with █ and then
+	// use a fractional unicode character for the fractional cell
+	wholeCells, remainder := math.Modf(scaledProgress)
+
+	s += strings.Repeat("█", int(wholeCells))
+
+	// fill in the remainder if the bar isn't full yet
+	if int(wholeCells) < b.Width {
+		// convert fractional (0-1) remainder to 1-8 unicode characters
+		// so we have greater resolution that the number of actual console characters
+		s += fractions[int(math.Floor(remainder*8))]
+
+		// fill the rest with spaces
+		s += strings.Repeat(" ", b.Width-(int(wholeCells)+1))
+	}
+
+	s += "]"
 	return s
 }

@@ -47,26 +47,61 @@ func TestBar(t *testing.T) {
 			Bar:    prettyprogress.Bar{Progress: 2, Total: 4, Width: 6},
 		},
 		{
+			Title:  "Unicode 1/8th characters when needed",
+			Expect: "[████▏   ]",
+			Bar:    prettyprogress.Bar{Progress: 33, Total: 64, Width: 8},
+		},
+		{
+			Title:  "Unicode 2/8th characters when needed",
+			Expect: "[████▎   ]",
+			Bar:    prettyprogress.Bar{Progress: 34, Total: 64, Width: 8},
+		},
+		{
 			Title:  "Unicode half-bar characters when needed",
-			Expect: "[██▌  ]",
-			Bar:    prettyprogress.Bar{Progress: 2, Total: 4, Width: 5},
+			Expect: "[██▋  ]",
+			Bar:    prettyprogress.Bar{Progress: 27, Total: 50, Width: 5},
+		},
+		{
+			Title:  "Unicode 7/8th characters when needed",
+			Expect: "[████▉   ]",
+			Bar:    prettyprogress.Bar{Progress: 39, Total: 64, Width: 8},
 		},
 		{
 			Title:  "Using full constructor",
-			Expect: "[██▌  ]",
-			Bar:    prettyprogress.NewBarWithWidth(2, 4, 5),
+			Expect: "[██▋  ]",
+			Bar:    prettyprogress.NewBarWithWidth(27, 50, 5),
 		},
 		{
 			Title:  "Using convenience constructor with default width",
 			Expect: "[██████████          ]",
 			Bar:    prettyprogress.NewBar(2, 4),
 		},
+		{
+			Title:  "Full bar",
+			Expect: "[█]",
+			Bar:    prettyprogress.Bar{Progress: 1, Total: 1, Width: 1},
+		},
+		{
+			Title:  "Over-full bar",
+			Expect: "[█]",
+			Bar:    prettyprogress.Bar{Progress: 2, Total: 1, Width: 1},
+		},
 	}
 
 	for _, eg := range examples {
 		t.Run(eg.Title, func(t *testing.T) {
-			assert.Equal(t, len(eg.Expect), len(eg.Bar.String()), "correct length")
-			assert.Equal(t, strings.Trim(eg.Expect, "[] "), strings.Trim(eg.Bar.String(), "[] "), "correct filled section")
+			assert.Equal(t,
+				len(eg.Expect),
+				len(eg.Bar.String()),
+				"incorrect length")
+			assert.Equal(t,
+				strings.Trim(eg.Expect, "[]█ "),
+				strings.Trim(eg.Bar.String(), "[]█ "),
+				"incorrect fractional characters")
+			assert.Equal(t,
+				strings.Trim(eg.Expect, "[] "),
+				strings.Trim(eg.Bar.String(), "[] "),
+				"incorrect filled section")
 			assert.Equal(t, eg.Expect, eg.Bar.String())
 		})
 	}
