@@ -49,16 +49,16 @@ func (b *Step) Update(bullet prettyprogress.Bullet, status string) {
 // progress of the current task
 //
 // For example, this could be used with a function that expects an interface with
-// an UpdateProgress method as follows:
+// an Update method as follows:
 //
 //   download(step.Bar(prettyprogress.Downloading, "Downloading layer.."))
 //
 // The corresponding `download` method could look as follows:
 //
-//   bar(p type interface{ UpdateProgress(int) }) {
-//     p.UpdateProgress(10)
-//     p.UpdateProgress(30)
-//     p.UpdateProgress(100)
+//   bar(p type interface{ Update(int) }) {
+//     p.Update(10)
+//     p.Update(30)
+//     p.Update(100)
 //   })
 func (b *Step) Bar(bullet prettyprogress.Bullet, status string) *Bar {
 	return NewBar(
