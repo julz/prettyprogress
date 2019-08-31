@@ -1,9 +1,9 @@
-package updater
+package prettyprogress
 
-import "github.com/julz/prettyprogress"
+import "github.com/julz/prettyprogress/ui"
 
 // Step is an updater whose watcher recieves the output of
-// prettyprogress.Step's String() method whenever its UpdateStatus method is
+// ui.Step's String() method whenever its UpdateStatus method is
 // called
 type Step struct {
 	bulletColors map[string]func(a ...interface{}) string
@@ -13,35 +13,35 @@ type Step struct {
 	watcher stepWatcher
 }
 
-type stepWatcher func(s prettyprogress.Step)
+type stepWatcher func(s ui.Step)
 
 // NewStep creates a new Step which can be updated with the status of a single task
 func NewStep(barTotal, barWidth int, w Watcher) *Step {
 	return &Step{
 		barWidth: barWidth,
 		barTotal: barTotal,
-		watcher:  func(s prettyprogress.Step) { w(s.String()) },
+		watcher:  func(s ui.Step) { w(s.String()) },
 	}
 }
 
 // Fail sets the steps name to the given string and changes the bullet to a symbol indicating failure
 func (b *Step) Fail(msg string) {
-	b.Update(prettyprogress.Failed, msg)
+	b.Update(ui.Failed, msg)
 }
 
 // Complete sets the steps name to the given string and changes the bullet to a
 // symbol indicating the task has been completed
 func (b *Step) Complete(msg string) {
-	b.Update(prettyprogress.Complete, msg)
+	b.Update(ui.Complete, msg)
 }
 
 // Start sets the steps name to the given string and changes the bullet to a symbol indicating the task is running
 func (b *Step) Start(msg string) {
-	b.Update(prettyprogress.Running, msg)
+	b.Update(ui.Running, msg)
 }
 
 // Update sets the steps name to the givem status and updated the bullet to the given Bullet
-func (b *Step) Update(bullet prettyprogress.Bullet, status string) {
+func (b *Step) Update(bullet ui.Bullet, status string) {
 	b.update(bullet, status, "")
 }
 
@@ -51,7 +51,7 @@ func (b *Step) Update(bullet prettyprogress.Bullet, status string) {
 // For example, this could be used with a function that expects an interface with
 // an Update method as follows:
 //
-//   download(step.Bar(prettyprogress.Downloading, "Downloading layer.."))
+//   download(step.Bar(ui.Downloading, "Downloading layer.."))
 //
 // The corresponding `download` method could look as follows:
 //
@@ -60,7 +60,7 @@ func (b *Step) Update(bullet prettyprogress.Bullet, status string) {
 //     p.Update(30)
 //     p.Update(100)
 //   })
-func (b *Step) Bar(bullet prettyprogress.Bullet, status string) *Bar {
+func (b *Step) Bar(bullet ui.Bullet, status string) *Bar {
 	return NewBar(
 		b.barTotal,
 		b.barWidth,
@@ -73,16 +73,16 @@ func (b *Step) Bar(bullet prettyprogress.Bullet, status string) *Bar {
 // UpdateWithProgress updates the Bullet, Status and Progress Bar of the current
 // step. Often either one of the convenience methods like Start,
 // Fail, Complete, or Bar will be a better option.
-func (b *Step) UpdateWithProgress(bullet prettyprogress.Bullet, status string, progress int) {
-	b.update(bullet, status, prettyprogress.Bar{
+func (b *Step) UpdateWithProgress(bullet ui.Bullet, status string, progress int) {
+	b.update(bullet, status, ui.Bar{
 		Width:    b.barWidth,
 		Total:    b.barTotal,
 		Progress: progress,
 	}.String())
 }
 
-func (b *Step) update(bullet prettyprogress.Bullet, status, bar string) {
-	b.watcher(prettyprogress.Step{
+func (b *Step) update(bullet ui.Bullet, status, bar string) {
+	b.watcher(ui.Step{
 		Bullet:          bullet,
 		BulletColorFunc: b.bulletColors[bullet.String()],
 		Name:            status,

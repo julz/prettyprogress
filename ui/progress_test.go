@@ -1,38 +1,38 @@
-package prettyprogress_test
+package ui_test
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/julz/prettyprogress"
+	"github.com/julz/prettyprogress/ui"
 	"gotest.tools/assert"
 )
 
 func TestProgress(t *testing.T) {
 	examples := []struct {
 		Title  string
-		Steps  prettyprogress.Steps
+		Steps  ui.Steps
 		Expect string
 	}{
 		{
 			Title: "Basic",
-			Steps: prettyprogress.Steps{
+			Steps: ui.Steps{
 				{
 					Name:   "Building..",
-					Bullet: prettyprogress.Complete,
+					Bullet: ui.Complete,
 				},
 				{
 					Name:   "Downloading..",
-					Bullet: prettyprogress.Downloading,
+					Bullet: ui.Downloading,
 					Bar:    "[███         ]",
 				},
 				{
 					Name:   "Scanning..",
-					Bullet: prettyprogress.Running,
+					Bullet: ui.Running,
 				},
 				{
 					Name:   "Waiting..",
-					Bullet: prettyprogress.Future,
+					Bullet: ui.Future,
 				},
 			},
 			Expect: withoutPadding(`
@@ -44,23 +44,23 @@ func TestProgress(t *testing.T) {
 		},
 		{
 			Title: "Over-long label moves progress bar out",
-			Steps: prettyprogress.Steps{
+			Steps: ui.Steps{
 				{
 					Name:   "Building..",
-					Bullet: prettyprogress.Complete,
+					Bullet: ui.Complete,
 				},
 				{
 					Name:   "Downloading..",
-					Bullet: prettyprogress.Downloading,
+					Bullet: ui.Downloading,
 					Bar:    "[███         ]",
 				},
 				{
 					Name:   "This line is really really long..",
-					Bullet: prettyprogress.Running,
+					Bullet: ui.Running,
 				},
 				{
 					Name:   "Waiting..",
-					Bullet: prettyprogress.Future,
+					Bullet: ui.Future,
 				},
 			},
 			Expect: withoutPadding(`
@@ -72,10 +72,10 @@ func TestProgress(t *testing.T) {
 		},
 		{
 			Title: "Colored bullets",
-			Steps: prettyprogress.Steps{
+			Steps: ui.Steps{
 				{
 					Name:   "Building..",
-					Bullet: prettyprogress.Complete,
+					Bullet: ui.Complete,
 					BulletColorFunc: func(s ...interface{}) string {
 						assert.DeepEqual(t, s, []interface{}{
 							"✓",

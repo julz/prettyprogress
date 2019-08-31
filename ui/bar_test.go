@@ -1,90 +1,90 @@
-package prettyprogress_test
+package ui_test
 
 import (
 	"testing"
 
 	"strings"
 
-	"github.com/julz/prettyprogress"
+	"github.com/julz/prettyprogress/ui"
 	"gotest.tools/assert"
 )
 
 func TestBar(t *testing.T) {
 	examples := []struct {
 		Title             string
-		Bar               prettyprogress.Bar
+		Bar               ui.Bar
 		Expect            string
 		ExpectLastBarChar string
 	}{
 		{
 			Title:  "Simple empty bar",
-			Bar:    prettyprogress.Bar{Progress: 0, Total: 4, Width: 4},
+			Bar:    ui.Bar{Progress: 0, Total: 4, Width: 4},
 			Expect: "[    ]",
 		},
 		{
 			Title:  "Empty bar larger width than total",
 			Expect: "[        ]",
-			Bar:    prettyprogress.Bar{Progress: 0, Total: 4, Width: 8},
+			Bar:    ui.Bar{Progress: 0, Total: 4, Width: 8},
 		},
 		{
 			Title:  "Bar with progress",
 			Expect: "[█   ]",
-			Bar:    prettyprogress.Bar{Progress: 1, Total: 4, Width: 4},
+			Bar:    ui.Bar{Progress: 1, Total: 4, Width: 4},
 		},
 		{
 			Title:  "Bar with progress, larger width than total",
 			Expect: "[██      ]",
-			Bar:    prettyprogress.Bar{Progress: 1, Total: 4, Width: 8},
+			Bar:    ui.Bar{Progress: 1, Total: 4, Width: 8},
 		},
 		{
 			Title:  "Bar with 50% progress",
 			Expect: "[████    ]",
-			Bar:    prettyprogress.Bar{Progress: 2, Total: 4, Width: 8},
+			Bar:    ui.Bar{Progress: 2, Total: 4, Width: 8},
 		},
 		{
 			Title:  "Non-integer progress step",
 			Expect: "[███   ]",
-			Bar:    prettyprogress.Bar{Progress: 2, Total: 4, Width: 6},
+			Bar:    ui.Bar{Progress: 2, Total: 4, Width: 6},
 		},
 		{
 			Title:  "Unicode 1/8th characters when needed",
 			Expect: "[████▏   ]",
-			Bar:    prettyprogress.Bar{Progress: 33, Total: 64, Width: 8},
+			Bar:    ui.Bar{Progress: 33, Total: 64, Width: 8},
 		},
 		{
 			Title:  "Unicode 2/8th characters when needed",
 			Expect: "[████▎   ]",
-			Bar:    prettyprogress.Bar{Progress: 34, Total: 64, Width: 8},
+			Bar:    ui.Bar{Progress: 34, Total: 64, Width: 8},
 		},
 		{
 			Title:  "Unicode half-bar characters when needed",
 			Expect: "[██▋  ]",
-			Bar:    prettyprogress.Bar{Progress: 27, Total: 50, Width: 5},
+			Bar:    ui.Bar{Progress: 27, Total: 50, Width: 5},
 		},
 		{
 			Title:  "Unicode 7/8th characters when needed",
 			Expect: "[████▉   ]",
-			Bar:    prettyprogress.Bar{Progress: 39, Total: 64, Width: 8},
+			Bar:    ui.Bar{Progress: 39, Total: 64, Width: 8},
 		},
 		{
 			Title:  "Using full constructor",
 			Expect: "[██▋  ]",
-			Bar:    prettyprogress.NewBarWithWidth(27, 50, 5),
+			Bar:    ui.NewBarWithWidth(27, 50, 5),
 		},
 		{
 			Title:  "Using convenience constructor with default width",
 			Expect: "[██████████          ]",
-			Bar:    prettyprogress.NewBar(2, 4),
+			Bar:    ui.NewBar(2, 4),
 		},
 		{
 			Title:  "Full bar",
 			Expect: "[█]",
-			Bar:    prettyprogress.Bar{Progress: 1, Total: 1, Width: 1},
+			Bar:    ui.Bar{Progress: 1, Total: 1, Width: 1},
 		},
 		{
 			Title:  "Over-full bar",
 			Expect: "[█]",
-			Bar:    prettyprogress.Bar{Progress: 2, Total: 1, Width: 1},
+			Bar:    ui.Bar{Progress: 2, Total: 1, Width: 1},
 		},
 	}
 

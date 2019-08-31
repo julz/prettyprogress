@@ -1,9 +1,9 @@
-package updater
+package prettyprogress
 
 import (
 	"sync"
 
-	"github.com/julz/prettyprogress"
+	"github.com/julz/prettyprogress/ui"
 )
 
 const defaultBarTotal = 100
@@ -15,7 +15,7 @@ type Steps struct {
 	bulletColors map[string]func(a ...interface{}) string
 
 	mu    sync.Mutex
-	steps prettyprogress.Steps
+	steps ui.Steps
 }
 
 // NewMultistep creates a new updater that can have multiple sub-steps. When any of the steps
@@ -38,7 +38,7 @@ func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 func (p *Steps) AddStep(options ...StepOption) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)
-	p.steps = append(p.steps, prettyprogress.Step{Bullet: prettyprogress.Future})
+	p.steps = append(p.steps, ui.Step{Bullet: ui.Future})
 	p.mu.Unlock()
 
 	s := &Step{
@@ -46,7 +46,7 @@ func (p *Steps) AddStep(options ...StepOption) *Step {
 
 		barWidth: p.barWidth,
 		barTotal: defaultBarTotal,
-		watcher: func(s prettyprogress.Step) {
+		watcher: func(s ui.Step) {
 			p.mu.Lock()
 			defer p.mu.Unlock()
 
@@ -64,7 +64,7 @@ func (p *Steps) AddStep(options ...StepOption) *Step {
 
 type StepsOption func(s *Steps)
 
-func WithBulletColor(bullet prettyprogress.Bullet, color func(...interface{}) string) func(s *Steps) {
+func WithBulletColor(bullet ui.Bullet, color func(...interface{}) string) func(s *Steps) {
 	return func(s *Steps) {
 		s.bulletColors[bullet.String()] = color
 	}
@@ -86,6 +86,6 @@ func WithBarTotal(total int) func(s *Step) {
 
 func WithStatus(msg string) func(S *Step) {
 	return func(s *Step) {
-		s.Update(prettyprogress.Future, msg)
+		s.Update(ui.Future, msg)
 	}
 }

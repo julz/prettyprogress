@@ -6,7 +6,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
-	"github.com/julz/prettyprogress/updater"
+	"github.com/julz/prettyprogress/ui"
 )
 
 func main() {
@@ -14,15 +14,15 @@ func main() {
 	w.Start()
 	defer w.Stop()
 
-	multiStep := updater.NewMultistep(
-		updater.Writeln(w),
-		updater.WithBulletColor(
-			prettyprogress.Complete, color.New(color.FgGreen).Sprint,
+	multiStep := prettyprogress.NewMultistep(
+		prettyprogress.Writeln(w),
+		prettyprogress.WithBulletColor(
+			ui.Complete, color.New(color.FgGreen).Sprint,
 		),
 	)
 
-	step1 := multiStep.AddStep(updater.WithBarTotal(1000))
-	step2 := multiStep.AddStep(updater.WithBarTotal(1000))
+	step1 := multiStep.AddStep(prettyprogress.WithBarTotal(1000))
+	step2 := multiStep.AddStep(prettyprogress.WithBarTotal(1000))
 	step3 := multiStep.AddStep()
 
 	step1.Start("Running..")
@@ -32,12 +32,12 @@ func main() {
 	ch := make(chan struct{})
 	go func() {
 		time.Sleep(500 * time.Millisecond)
-		doSomethingWithProgress(step1.Bar(prettyprogress.Downloading, "Downloading.."))
+		doSomethingWithProgress(step1.Bar(ui.Downloading, "Downloading.."))
 		step1.Complete("Done-zo")
 		close(ch)
 	}()
 
-	doSomethingWithProgress(step2.Bar(prettyprogress.Uploading, "Uploading.."))
+	doSomethingWithProgress(step2.Bar(ui.Uploading, "Uploading.."))
 	step2.Complete("Done-zo")
 	step3.Complete("Complete!")
 

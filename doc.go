@@ -1,5 +1,3 @@
-// Package prettyprogress contains some simple structs that have nice-looking
-// String() methods for printing console output with unicode characters.
-//
-// For many use-cases, the `updater` sub-package will be convenient.
+// Package prettyprogress contains some handy objects for printing out
+// nice-looking progress information to a terminal
 package prettyprogress

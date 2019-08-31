@@ -7,7 +7,7 @@ import (
 
 	"github.com/gookit/color"
 	"github.com/gosuri/uilive"
-	"github.com/julz/prettyprogress"
+	"github.com/julz/prettyprogress/ui"
 )
 
 func main() {
@@ -16,25 +16,25 @@ func main() {
 	defer writer.Stop()
 
 	for i := 0; i < 100; i++ {
-		fmt.Fprint(writer, prettyprogress.Steps{
+		fmt.Fprint(writer, ui.Steps{
 			{
 				Name:            "Building..",
-				Bullet:          prettyprogress.Complete,
+				Bullet:          ui.Complete,
 				BulletColorFunc: color.New(color.FgGreen).Render,
 			},
 			{
 				Name:   "Downloading..",
-				Bullet: prettyprogress.Downloading,
-				Bar:    prettyprogress.NewBar(i, 100).String(),
+				Bullet: ui.Downloading,
+				Bar:    ui.NewBar(i, 100).String(),
 			},
 			{
 				Name:   "Scanning..",
-				Bullet: prettyprogress.Running,
-				Bar:    prettyprogress.NewBar(int(math.Min(float64(i), 50)), 50).String(),
+				Bullet: ui.Running,
+				Bar:    ui.NewBar(int(math.Min(float64(i), 50)), 50).String(),
 			},
 			{
 				Name:   "Waiting to Start..",
-				Bullet: prettyprogress.Future,
+				Bullet: ui.Future,
 			},
 		})
 

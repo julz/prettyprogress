@@ -1,4 +1,4 @@
-package prettyprogress
+package ui
 
 import (
 	"fmt"
