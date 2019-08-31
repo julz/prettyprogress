@@ -26,22 +26,22 @@ func NewStep(barTotal, barWidth int, w Watcher) *Step {
 
 // Fail sets the steps name to the given string and changes the bullet to a symbol indicating failure
 func (b *Step) Fail(msg string) {
-	b.UpdateStatus(prettyprogress.Failed, msg)
+	b.Update(prettyprogress.Failed, msg)
 }
 
 // Complete sets the steps name to the given string and changes the bullet to a
 // symbol indicating the task has been completed
 func (b *Step) Complete(msg string) {
-	b.UpdateStatus(prettyprogress.Complete, msg)
+	b.Update(prettyprogress.Complete, msg)
 }
 
 // Start sets the steps name to the given string and changes the bullet to a symbol indicating the task is running
 func (b *Step) Start(msg string) {
-	b.UpdateStatus(prettyprogress.Running, msg)
+	b.Update(prettyprogress.Running, msg)
 }
 
-// UpdateStatus sets the steps name to the givem status and updated the bullet to the given Bullet
-func (b *Step) UpdateStatus(bullet prettyprogress.Bullet, status string) {
+// Update sets the steps name to the givem status and updated the bullet to the given Bullet
+func (b *Step) Update(bullet prettyprogress.Bullet, status string) {
 	b.update(bullet, status, "")
 }
 
@@ -70,10 +70,10 @@ func (b *Step) Bar(bullet prettyprogress.Bullet, status string) *Bar {
 	)
 }
 
-// UpdateProgress updates the Bullet, Status and Progress Bar of the current
-// step. Often either UpdateStatus, one of the convenience methods like Start,
+// UpdateWithProgress updates the Bullet, Status and Progress Bar of the current
+// step. Often either one of the convenience methods like Start,
 // Fail, Complete, or Bar will be a better option.
-func (b *Step) UpdateProgress(bullet prettyprogress.Bullet, status string, progress int) {
+func (b *Step) UpdateWithProgress(bullet prettyprogress.Bullet, status string, progress int) {
 	b.update(bullet, status, prettyprogress.Bar{
 		Width:    b.barWidth,
 		Total:    b.barTotal,

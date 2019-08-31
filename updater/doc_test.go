@@ -17,19 +17,43 @@ func Example() {
 	step1.Complete("Complete")
 	step3.Start("Preparing!")
 	step3.Complete("Complete!")
-	step2.UpdateStatus(prettyprogress.Downloading, "Downloading..")
-	step2.UpdateProgress(prettyprogress.Uploading, "Uploading..", 40)
+	step2.Update(prettyprogress.Downloading, "Downloading..")
+	step2.UpdateWithProgress(prettyprogress.Uploading, "Uploading..", 40)
 	step2.Fail(":(")
+}
+
+func ExampleBar() {
+	bar := updater.NewBar(100, 5, updater.Writeln(os.Stdout))
+	bar.Update(20)
+	bar.Update(40)
+	bar.Update(80)
+
+	// Output:  [█    ]
+	// [██   ]
+	// [████ ]
+}
+
+func ExampleStep() {
+	step := updater.NewStep(100, 5, updater.Writeln(os.Stdout))
+	step.Start("Starting..")
+	step.UpdateWithProgress(prettyprogress.Downloading, "Downloading", 20)
+	step.UpdateWithProgress(prettyprogress.Downloading, "Downloading", 80)
+	step.Complete("Done!")
+
+	// Output:  ►  Starting..
+	//  ↡  Downloading   [█    ]
+	//  ↡  Downloading   [████ ]
+	//  ✓  Done!
 }
 
 func ExampleStep_Bar() {
 	step := updater.NewStep(100, 5, updater.Writeln(os.Stdout))
-	step.UpdateStatus(prettyprogress.Running, "Preparing")
+	step.Update(prettyprogress.Running, "Preparing")
 
 	bar := step.Bar(prettyprogress.Downloading, "Downloading")
-	bar.UpdateProgress(20)
-	bar.UpdateProgress(80)
-	bar.UpdateProgress(100)
+	bar.Update(20)
+	bar.Update(80)
+	bar.Update(100)
 	// Output:  ►  Preparing
 	//  ↡  Downloading   [█    ]
 	//  ↡  Downloading   [████ ]

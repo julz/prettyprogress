@@ -21,9 +21,9 @@ func TestMultistep(t *testing.T) {
 	step1 := steps.AddStep(updater.WithBarTotal(100))
 	step2 := steps.AddStep()
 
-	step1.UpdateStatus(prettyprogress.Running, "hello")
-	step2.UpdateStatus(prettyprogress.Complete, "bye")
-	step1.UpdateProgress(prettyprogress.Downloading, "updated", 12)
+	step1.Update(prettyprogress.Running, "hello")
+	step2.Update(prettyprogress.Complete, "bye")
+	step1.UpdateWithProgress(prettyprogress.Downloading, "updated", 12)
 
 	assert.DeepEqual(t, recieved, []string{
 		prettyprogress.Steps{
@@ -84,9 +84,9 @@ func TestMultistepWithColor(t *testing.T) {
 	step1 := steps.AddStep(updater.WithBarTotal(100))
 	step2 := steps.AddStep()
 
-	step1.UpdateStatus(prettyprogress.Running, "hello")
-	step2.UpdateStatus(prettyprogress.Complete, "bye")
-	step1.UpdateProgress(prettyprogress.Downloading, "updated", 12)
+	step1.Update(prettyprogress.Running, "hello")
+	step2.Update(prettyprogress.Complete, "bye")
+	step1.UpdateWithProgress(prettyprogress.Downloading, "updated", 12)
 
 	assert.DeepEqual(t, recieved, []string{
 		prettyprogress.Steps{

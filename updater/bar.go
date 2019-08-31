@@ -29,8 +29,8 @@ func NewBar(total, width int, w Watcher) *Bar {
 	}
 }
 
-// UpdateProgress calls the Bar's watcher (configured in NewBar) with the new
+// Update calls the Bar's watcher (configured in NewBar) with the new
 // state. Generally this will cause the new bar to be printed out to the user.
-func (b *Bar) UpdateProgress(progress int) {
+func (b *Bar) Update(progress int) {
 	b.watcher(prettyprogress.Bar{Progress: progress, Width: b.width, Total: b.total}.String())
 }

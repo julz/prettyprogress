@@ -16,9 +16,9 @@ func TestProgressUpdater(t *testing.T) {
 
 	ch := make(chan struct{})
 	go func() {
-		updater.UpdateProgress(10)
-		updater.UpdateProgress(5)
-		updater.UpdateProgress(15)
+		updater.Update(10)
+		updater.Update(5)
+		updater.Update(15)
 		close(ch)
 	}()
 
@@ -39,8 +39,8 @@ func TestStatusUpdater(t *testing.T) {
 
 	ch := make(chan struct{})
 	go func() {
-		updater.UpdateStatus(prettyprogress.Running, "Hello")
-		updater.UpdateProgress(prettyprogress.Complete, "Done", 4)
+		updater.Update(prettyprogress.Running, "Hello")
+		updater.UpdateWithProgress(prettyprogress.Complete, "Done", 4)
 		close(ch)
 	}()
 

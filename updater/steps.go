@@ -86,6 +86,6 @@ func WithBarTotal(total int) func(s *Step) {
 
 func WithStatus(msg string) func(S *Step) {
 	return func(s *Step) {
-		s.UpdateStatus(prettyprogress.Future, msg)
+		s.Update(prettyprogress.Future, msg)
 	}
 }

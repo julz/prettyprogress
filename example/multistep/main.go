@@ -44,9 +44,9 @@ func main() {
 	<-ch
 }
 
-func doSomethingWithProgress(b interface{ UpdateProgress(int) }) {
+func doSomethingWithProgress(bar interface{ Update(int) }) {
 	for i := 0; i <= 1010; i++ {
-		b.UpdateProgress(i)
+		bar.Update(i)
 		time.Sleep(2 * time.Millisecond)
 	}
 }
