@@ -12,6 +12,8 @@ type Bar struct {
 	total int
 	width int
 
+	label ui.LabelFunc
+
 	watcher Watcher
 }
 
@@ -30,5 +32,5 @@ func NewBar(total, width int, w Watcher) *Bar {
 // Update calls the Bar's watcher (configured in NewBar) with the new
 // state. Generally this will cause the new bar to be printed out to the user.
 func (b *Bar) Update(progress int) {
-	b.watcher(ui.Bar{Progress: progress, Width: b.width, Total: b.total}.String())
+	b.watcher(ui.Bar{Progress: progress, Width: b.width, Total: b.total, LabelFunc: b.label}.String())
 }

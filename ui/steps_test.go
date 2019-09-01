@@ -8,7 +8,7 @@ import (
 	"gotest.tools/assert"
 )
 
-func TestProgress(t *testing.T) {
+func TestSteps(t *testing.T) {
 	examples := []struct {
 		Title  string
 		Steps  ui.Steps
@@ -96,12 +96,6 @@ func TestProgress(t *testing.T) {
 			assert.Equal(t, eg.Expect, eg.Steps.String())
 		})
 	}
-}
-
-type StringableString string
-
-func (s StringableString) String() string {
-	return string(s)
 }
 
 func withoutPadding(s string) string {

@@ -42,6 +42,11 @@ func TestBar(t *testing.T) {
 			Bar:    ui.Bar{Progress: 2, Total: 4, Width: 8},
 		},
 		{
+			Title:  "Bar with 50% progress, showing Percentage label",
+			Expect: "[████    ] 50%",
+			Bar:    ui.Bar{Progress: 2, Total: 4, Width: 8, LabelFunc: ui.PercentageLabel},
+		},
+		{
 			Title:  "Non-integer progress step",
 			Expect: "[███   ]",
 			Bar:    ui.Bar{Progress: 2, Total: 4, Width: 6},

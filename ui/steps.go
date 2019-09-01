@@ -27,12 +27,14 @@ func (p Steps) String() string {
 }
 
 // Step represents a single step
+// It is formatted as `$Bullet $Name $Bar` with appropriate spacing
 type Step struct {
 	Bullet          fmt.Stringer
 	BulletColorFunc func(...interface{}) string
 
 	Name string
-	Bar  string
+
+	Bar string
 
 	paddedName string
 }
@@ -43,14 +45,14 @@ func (s Step) String() string {
 		s.paddedName = s.Name
 	}
 
-	name := s.Name
-	if s.Bar != "" {
-		name = s.paddedName + "   "
-	}
-
 	bullet := s.Bullet.String()
 	if s.BulletColorFunc != nil {
 		bullet = s.BulletColorFunc(s.Bullet.String())
+	}
+
+	name := s.Name
+	if s.Bar != "" {
+		name = s.paddedName + "   "
 	}
 
 	return fmt.Sprintf(" %s  %s%s", bullet, name, s.Bar)
@@ -60,7 +62,7 @@ func (s Step) String() string {
 type Bullet string
 
 const (
-	Failed      Bullet = "⚠"
+	Failed      Bullet = "✗"
 	Future      Bullet = " "
 	Running     Bullet = "►"
 	Downloading Bullet = "↡"

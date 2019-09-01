@@ -1,6 +1,7 @@
 package prettyprogress_test
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/julz/prettyprogress"
@@ -8,18 +9,48 @@ import (
 )
 
 func Example() {
-	multiStep := prettyprogress.NewMultistep(prettyprogress.Write(os.Stdout), prettyprogress.WithBarWidth(20))
-	step1 := multiStep.AddStep()
-	step2 := multiStep.AddStep()
-	step3 := multiStep.AddStep()
+	multiStep := prettyprogress.NewMultistep(
+		func(s string) {
+			fmt.Println("---")
+			fmt.Println(s)
+		},
+		prettyprogress.WithBarWidth(5),
+		prettyprogress.WithBarLabel(ui.PercentageLabel),
+	)
 
-	step1.Start("Running..")
-	step1.Complete("Complete")
-	step3.Start("Preparing!")
-	step3.Complete("Complete!")
-	step2.Update(ui.Downloading, "Downloading..")
-	step2.UpdateWithProgress(ui.Uploading, "Uploading..", 40)
-	step2.Fail(":(")
+	step1 := multiStep.AddStep(prettyprogress.WithStatus("Prepare.."))
+	step2 := multiStep.AddStep(prettyprogress.WithStatus("Download XYZ.."))
+
+	step1.Complete("Prepared")
+
+	bar := step2.Bar(ui.Downloading, "Downloading..")
+	bar.Update(80)
+
+	step2.Fail("Download Failed")
+
+	// Output: ---
+	//
+	//     Prepare..
+	//
+	// ---
+	//
+	//     Prepare..
+	//     Download XYZ..
+	//
+	// ---
+	//
+	//  ✓  Prepared
+	//     Download XYZ..
+	//
+	// ---
+	//
+	//  ✓  Prepared
+	//  ↡  Downloading..   [████ ] 80%
+	//
+	// ---
+	//
+	//  ✓  Prepared
+	//  ✗  Download Failed
 }
 
 func ExampleBar() {

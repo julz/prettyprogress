@@ -27,9 +27,29 @@ func Example() {
 			Bullet: ui.Future,
 		},
 	})
+
 	// Output:
 	//  ✓  Building..
 	//  ↡  Downloading..        [██                  ]
 	//  ►  Scanning..           [████                ]
 	//     Waiting to Start..
+}
+
+func ExampleStep() {
+	fmt.Printf("%s", ui.Step{
+		Bullet: ui.Downloading,
+		Name:   "Downloading..",
+		Bar:    "[██   ]",
+	})
+
+	// Output: ↡  Downloading..   [██   ]
+}
+func ExampleBar() {
+	fmt.Printf("%s", ui.Bar{
+		Width:    5,
+		Total:    100,
+		Progress: 40,
+	})
+
+	// Output: [██   ]
 }

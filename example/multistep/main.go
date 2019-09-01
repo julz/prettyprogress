@@ -19,6 +19,7 @@ func main() {
 		prettyprogress.WithBulletColor(
 			ui.Complete, color.New(color.FgGreen).Sprint,
 		),
+		prettyprogress.WithBarLabel(ui.PercentageLabel),
 	)
 
 	step1 := multiStep.AddStep(prettyprogress.WithBarTotal(1000))

@@ -11,7 +11,9 @@ const defaultBarTotal = 100
 type Steps struct {
 	watcher Watcher
 
-	barWidth     int
+	barWidth int
+	barLabel ui.LabelFunc
+
 	bulletColors map[string]func(a ...interface{}) string
 
 	mu    sync.Mutex
@@ -45,7 +47,9 @@ func (p *Steps) AddStep(options ...StepOption) *Step {
 		bulletColors: p.bulletColors,
 
 		barWidth: p.barWidth,
+		barLabel: p.barLabel,
 		barTotal: defaultBarTotal,
+
 		watcher: func(s ui.Step) {
 			p.mu.Lock()
 			defer p.mu.Unlock()
@@ -76,15 +80,21 @@ func WithBarWidth(width int) func(s *Steps) {
 	}
 }
 
+func WithBarLabel(fn ui.LabelFunc) func(*Steps) {
+	return func(s *Steps) {
+		s.barLabel = fn
+	}
+}
+
 type StepOption func(s *Step)
 
-func WithBarTotal(total int) func(s *Step) {
+func WithBarTotal(total int) func(*Step) {
 	return func(s *Step) {
 		s.barTotal = total
 	}
 }
 
-func WithStatus(msg string) func(S *Step) {
+func WithStatus(msg string) func(*Step) {
 	return func(s *Step) {
 		s.Update(ui.Future, msg)
 	}

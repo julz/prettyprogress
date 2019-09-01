@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"math"
 	"strings"
 )
@@ -10,6 +11,8 @@ type Bar struct {
 	Progress int
 	Total    int
 	Width    int
+
+	LabelFunc LabelFunc
 }
 
 const defaultWidth int = 20
@@ -66,5 +69,16 @@ func (b Bar) String() string {
 	}
 
 	s += "]"
+
+	if b.LabelFunc != nil {
+		s += " " + b.LabelFunc(progress, b.Total)
+	}
+
 	return s
+}
+
+type LabelFunc func(progress, total int) string
+
+func PercentageLabel(progress, total int) string {
+	return fmt.Sprintf("%d%%", int((float64(progress)/float64(total))*float64(100)))
 }

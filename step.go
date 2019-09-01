@@ -7,8 +7,10 @@ import "github.com/julz/prettyprogress/ui"
 // called
 type Step struct {
 	bulletColors map[string]func(a ...interface{}) string
-	barWidth     int
-	barTotal     int
+
+	barWidth int
+	barTotal int
+	barLabel ui.LabelFunc
 
 	watcher stepWatcher
 }
@@ -61,13 +63,14 @@ func (b *Step) Update(bullet ui.Bullet, status string) {
 //     p.Update(100)
 //   })
 func (b *Step) Bar(bullet ui.Bullet, status string) *Bar {
-	return NewBar(
-		b.barTotal,
-		b.barWidth,
-		func(s string) {
+	return &Bar{
+		total: b.barTotal,
+		width: b.barWidth,
+		label: b.barLabel,
+		watcher: func(s string) {
 			b.update(bullet, status, s)
 		},
-	)
+	}
 }
 
 // UpdateWithProgress updates the Bullet, Status and Progress Bar of the current

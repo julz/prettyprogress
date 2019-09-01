@@ -8,7 +8,7 @@ import (
 	"gotest.tools/assert"
 )
 
-func TestProgressUpdater(t *testing.T) {
+func TestBar(t *testing.T) {
 	var recieved []string
 	bar := prettyprogress.NewBar(100, 20, func(b string) {
 		recieved = append(recieved, b)
@@ -31,7 +31,7 @@ func TestProgressUpdater(t *testing.T) {
 	})
 }
 
-func TestStatusUpdater(t *testing.T) {
+func TestStep(t *testing.T) {
 	var recieved []string
 	step := prettyprogress.NewStep(10, 5, func(b string) {
 		recieved = append(recieved, b)
