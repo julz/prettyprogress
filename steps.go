@@ -37,18 +37,22 @@ func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 }
 
 // AddStep adds a sub-step to the display
-func (p *Steps) AddStep(options ...StepOption) *Step {
+func (p *Steps) AddStep(name string, barTotal int) *Step {
 	p.mu.Lock()
 	stepIndex := len(p.steps)
 	p.steps = append(p.steps, ui.Step{Bullet: ui.Future})
 	p.mu.Unlock()
+
+	if barTotal == 0 {
+		barTotal = 100
+	}
 
 	s := &Step{
 		bulletColors: p.bulletColors,
 
 		barWidth: p.barWidth,
 		barLabel: p.barLabel,
-		barTotal: defaultBarTotal,
+		barTotal: barTotal,
 
 		watcher: func(s ui.Step) {
 			p.mu.Lock()
@@ -59,8 +63,8 @@ func (p *Steps) AddStep(options ...StepOption) *Step {
 		},
 	}
 
-	for _, o := range options {
-		o(s)
+	if name != "" {
+		s.update(ui.Future, name, "")
 	}
 
 	return s
@@ -83,19 +87,5 @@ func WithBarWidth(width int) func(s *Steps) {
 func WithBarLabel(fn ui.LabelFunc) func(*Steps) {
 	return func(s *Steps) {
 		s.barLabel = fn
-	}
-}
-
-type StepOption func(s *Step)
-
-func WithBarTotal(total int) func(*Step) {
-	return func(s *Step) {
-		s.barTotal = total
-	}
-}
-
-func WithStatus(msg string) func(*Step) {
-	return func(s *Step) {
-		s.Update(ui.Future, msg)
 	}
 }

@@ -18,8 +18,8 @@ func Example() {
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
 	)
 
-	step1 := multiStep.AddStep(prettyprogress.WithStatus("Prepare.."))
-	step2 := multiStep.AddStep(prettyprogress.WithStatus("Download XYZ.."))
+	step1 := multiStep.AddStep("Prepare..", 0)
+	step2 := multiStep.AddStep("Download XYZ..", 100)
 
 	step1.Complete("Prepared")
 

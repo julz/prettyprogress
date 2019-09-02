@@ -22,25 +22,25 @@ func main() {
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
 	)
 
-	step1 := multiStep.AddStep(prettyprogress.WithBarTotal(1000))
-	step2 := multiStep.AddStep(prettyprogress.WithBarTotal(1000))
-	step3 := multiStep.AddStep()
+	step1 := multiStep.AddStep("Download", 1000)
+	step2 := multiStep.AddStep("Upload", 800)
+	step3 := multiStep.AddStep("Some Action", 0)
 
-	step1.Start("Running..")
-	step2.Start("Running..")
-	step3.Start("Running..")
+	step3.Start("Running Something..")
 
 	ch := make(chan struct{})
 	go func() {
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(400 * time.Millisecond)
 		doSomethingWithProgress(step1.Bar(ui.Downloading, "Downloading.."))
-		step1.Complete("Done-zo")
+		step1.Complete("Download done")
 		close(ch)
 	}()
 
 	doSomethingWithProgress(step2.Bar(ui.Uploading, "Uploading.."))
-	step2.Complete("Done-zo")
-	step3.Complete("Complete!")
+	step2.Complete("Upload complete")
+
+	time.Sleep(600 * time.Millisecond)
+	step3.Complete("Some Action Done")
 
 	<-ch
 }
