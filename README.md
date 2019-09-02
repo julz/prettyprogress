@@ -7,7 +7,9 @@ a tiny library for printing nice-looking console progress
 
 # Quick Start
 
-See [example/simple/main.go](example/simple/main.go).
+See [example/simple/main.go](example/simple/main.go) for the UI-only structs or
+[/example/multistep/main.go](example/multistep/main.go) for the fancy
+thread-safe interface.
 
 # Features:
 
@@ -15,7 +17,7 @@ See [example/simple/main.go](example/simple/main.go).
  - Multiple parallel steps
  - Unicode progress bars with smooth-scrolling via box-drawing characters (inspired by [this blog post](https://mike42.me/blog/2018-06-make-better-cli-progress-bars-with-unicode-block-characters))
  - Simple, composable API: just prints itself, use e.g. [uilive](https://github.com/gosuri/uilive) for animation
- - Thread-safe multi-step `updater` sub-package (see [/examples/multistep/main.go](example/multistep/main.go))
+ - Basic [UI-only package](https://godoc.org/github.com/julz/prettyprogress/ui) if you just want to print a nice progress bar or grab a pretty unicode icon
 
 # Example:
 
