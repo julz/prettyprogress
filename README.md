@@ -7,9 +7,7 @@ a tiny library for printing nice-looking console progress
 
 # Quick Start
 
-See [example/simple/main.go](example/simple/main.go) for the UI-only structs or
-[/example/multistep/main.go](example/multistep/main.go) for the fancy
-thread-safe interface.
+See [example/multistep/main.go](example/multistep/main.go) for the main API, or [example/simple/main.go](example/simple/main.go) for UI-only structs
 
 # Features:
 
