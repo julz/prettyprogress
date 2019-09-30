@@ -12,14 +12,20 @@ type Bar struct {
 	Total    int
 	Width    int
 
+	StartChar string
+	EndChar   string
+
 	LabelFunc LabelFunc
 }
 
 const defaultWidth int = 20
 
+const DefaultBarStart = "["
+const DefaultBarEnd = "]"
+
 // NewBar creates a new Bar with a default width of 20 characters
 func NewBar(progress, total int) Bar {
-	return Bar{Progress: progress, Total: total, Width: defaultWidth}
+	return NewBarWithWidth(progress, total, defaultWidth)
 }
 
 // NewBarWithWidth creates a new Bar with the given progress, total and width
@@ -46,7 +52,17 @@ func (b Bar) String() string {
 		progress = b.Total
 	}
 
-	s := "["
+	startChar := DefaultBarStart
+	if b.StartChar != "" {
+		startChar = b.StartChar
+	}
+
+	endChar := DefaultBarEnd
+	if b.EndChar != "" {
+		endChar = b.EndChar
+	}
+
+	s := startChar
 
 	// scaledProgress is progress between 0 and width (rather than 0 and total)
 	scaledProgress := float64(progress) * (float64(b.Width) / float64(b.Total))
@@ -68,7 +84,7 @@ func (b Bar) String() string {
 		s += strings.Repeat(" ", b.Width-(int(wholeCells)+1))
 	}
 
-	s += "]"
+	s += endChar
 
 	if b.LabelFunc != nil {
 		s += " " + b.LabelFunc(progress, b.Total)

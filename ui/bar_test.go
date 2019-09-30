@@ -91,6 +91,11 @@ func TestBar(t *testing.T) {
 			Expect: "[█]",
 			Bar:    ui.Bar{Progress: 2, Total: 1, Width: 1},
 		},
+		{
+			Title:  "Bar with custom end chars",
+			Expect: "┃██   ┃",
+			Bar:    ui.Bar{Progress: 2, Total: 5, Width: 5, StartChar: "┃", EndChar: "┃"},
+		},
 	}
 
 	for _, eg := range examples {
