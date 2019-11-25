@@ -10,9 +10,10 @@ import (
 
 func TestSteps(t *testing.T) {
 	examples := []struct {
-		Title  string
-		Steps  ui.Steps
-		Expect string
+		Title          string
+		Steps          ui.Steps
+		Expect         string
+		ExpectAnimated []string
 	}{
 		{
 			Title: "Basic",
@@ -89,11 +90,49 @@ func TestSteps(t *testing.T) {
 				 C  Building..
 			`),
 		},
+		{
+			Title: "Animated bullets",
+			Steps: ui.Steps{
+				{
+					Name:   "Building..",
+					Bullet: ui.Running,
+					BulletAnimationFunc: func(b string, frame int) string {
+						assert.DeepEqual(t, b, "►")
+
+						return []string{
+							"1", "2", "3",
+						}[frame]
+					},
+				},
+			},
+			Expect: withoutPadding(`
+				 1  Building..
+			`),
+			ExpectAnimated: []string{
+				withoutPadding(`
+				 1  Building..
+				`),
+				withoutPadding(`
+				 2  Building..
+				`),
+				withoutPadding(`
+				 3  Building..
+				`),
+			},
+		},
 	}
 
 	for _, eg := range examples {
 		t.Run(eg.Title, func(t *testing.T) {
 			assert.Equal(t, eg.Expect, eg.Steps.String())
+
+			if len(eg.ExpectAnimated) == 0 {
+				eg.ExpectAnimated = []string{eg.Expect}
+			}
+
+			for i, expect := range eg.ExpectAnimated {
+				assert.Equal(t, expect, eg.Steps.AnimatedString(i), "frame %d should match", i)
+			}
 		})
 	}
 }

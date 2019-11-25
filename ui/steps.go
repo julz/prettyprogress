@@ -10,6 +10,12 @@ type Steps []Step
 
 // String outputs the set of steps as a nicely formatted String
 func (p Steps) String() string {
+	return p.AnimatedString(0)
+}
+
+// AnimatedString outputs the steps as a nicely formatted string with the
+// given frame of any bullets shown
+func (p Steps) AnimatedString(frame int) string {
 	longestName := 0
 	for _, step := range p {
 		if len(step.Name) > longestName {
@@ -20,7 +26,7 @@ func (p Steps) String() string {
 	s := "\n"
 	for _, step := range p {
 		step.paddedName = step.Name + strings.Repeat(" ", longestName-len(step.Name))
-		s += step.String() + "\n"
+		s += step.AnimatedString(frame) + "\n"
 	}
 
 	return s
@@ -29,8 +35,9 @@ func (p Steps) String() string {
 // Step represents a single step
 // It is formatted as `$Bullet $Name $Bar` with appropriate spacing
 type Step struct {
-	Bullet          fmt.Stringer
-	BulletColorFunc func(...interface{}) string
+	Bullet              fmt.Stringer
+	BulletColorFunc     func(...interface{}) string
+	BulletAnimationFunc func(b string, frame int) string
 
 	Name string
 
@@ -41,6 +48,11 @@ type Step struct {
 
 // String outputs the Step as a nicely formatted String
 func (s Step) String() string {
+	return s.AnimatedString(0)
+}
+
+// AnimatedString returns the Step's string output for a given frame
+func (s Step) AnimatedString(frame int) string {
 	if s.paddedName == "" {
 		s.paddedName = s.Name
 	}
@@ -48,6 +60,10 @@ func (s Step) String() string {
 	bullet := s.Bullet.String()
 	if s.BulletColorFunc != nil {
 		bullet = s.BulletColorFunc(s.Bullet.String())
+	}
+
+	if s.BulletAnimationFunc != nil {
+		bullet = s.BulletAnimationFunc(bullet, frame)
 	}
 
 	name := s.Name
