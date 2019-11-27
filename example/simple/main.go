@@ -18,9 +18,8 @@ func main() {
 	for i := 0; i < 100; i++ {
 		fmt.Fprint(writer, ui.Steps{
 			{
-				Name:            "Building..",
-				Bullet:          ui.Complete,
-				BulletColorFunc: color.New(color.FgGreen).Render,
+				Name:   "Building..",
+				Bullet: ui.Complete.WithColor(color.New(color.FgGreen)),
 			},
 			{
 				Name:   "Downloading..",

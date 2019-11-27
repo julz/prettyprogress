@@ -2,6 +2,7 @@ package prettyprogress
 
 import (
 	"sync"
+	"time"
 
 	"github.com/julz/prettyprogress/ui"
 )
@@ -13,8 +14,11 @@ type Steps struct {
 
 	barWidth int
 	barLabel ui.LabelFunc
+	bullets  ui.BulletSet
 
-	bulletColors map[string]func(a ...interface{}) string
+	frame         int
+	frameMu       sync.RWMutex
+	frameTickerCh <-chan time.Time
 
 	mu    sync.Mutex
 	steps ui.Steps
@@ -24,14 +28,24 @@ type Steps struct {
 // are updated, the Watcher is called with the new string to display.
 func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 	s := &Steps{
-		bulletColors: make(map[string]func(a ...interface{}) string),
-		barWidth:     20,
-		watcher:      watcher,
+		barWidth: 20,
+		bullets:  ui.DefaultBulletSet,
+		watcher:  watcher,
 	}
 
 	for _, option := range options {
 		option(s)
 	}
+
+	go func() {
+		for range s.frameTickerCh {
+			s.frameMu.Lock()
+			s.frame = s.frame + 1
+			s.frameMu.Unlock()
+
+			s.refresh()
+		}
+	}()
 
 	return s
 }
@@ -48,18 +62,18 @@ func (p *Steps) AddStep(name string, barTotal int) *Step {
 	}
 
 	s := &Step{
-		bulletColors: p.bulletColors,
-
 		barWidth: p.barWidth,
 		barLabel: p.barLabel,
 		barTotal: barTotal,
+
+		bullets: p.bullets,
 
 		watcher: func(s ui.Step) {
 			p.mu.Lock()
 			defer p.mu.Unlock()
 
 			p.steps[stepIndex] = s
-			p.watcher(p.steps.String())
+			p.refresh()
 		},
 	}
 
@@ -70,13 +84,14 @@ func (p *Steps) AddStep(name string, barTotal int) *Step {
 	return s
 }
 
-type StepsOption func(s *Steps)
+func (p *Steps) refresh() {
+	p.frameMu.RLock()
+	defer p.frameMu.RUnlock()
 
-func WithBulletColor(bullet ui.Bullet, color func(...interface{}) string) func(s *Steps) {
-	return func(s *Steps) {
-		s.bulletColors[bullet.String()] = color
-	}
+	p.watcher(p.steps.AnimatedString(p.frame))
 }
+
+type StepsOption func(s *Steps)
 
 func WithBarWidth(width int) func(s *Steps) {
 	return func(s *Steps) {
@@ -87,5 +102,17 @@ func WithBarWidth(width int) func(s *Steps) {
 func WithBarLabel(fn ui.LabelFunc) func(*Steps) {
 	return func(s *Steps) {
 		s.barLabel = fn
+	}
+}
+
+func WithBullets(b ui.BulletSet) func(*Steps) {
+	return func(s *Steps) {
+		s.bullets = b
+	}
+}
+
+func WithAnimationFrameTicker(c <-chan time.Time) func(*Steps) {
+	return func(s *Steps) {
+		s.frameTickerCh = c
 	}
 }

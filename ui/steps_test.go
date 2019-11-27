@@ -72,37 +72,11 @@ func TestSteps(t *testing.T) {
 			`),
 		},
 		{
-			Title: "Colored bullets",
-			Steps: ui.Steps{
-				{
-					Name:   "Building..",
-					Bullet: ui.Complete,
-					BulletColorFunc: func(s ...interface{}) string {
-						assert.DeepEqual(t, s, []interface{}{
-							"✓",
-						})
-
-						return "C"
-					},
-				},
-			},
-			Expect: withoutPadding(`
-				 C  Building..
-			`),
-		},
-		{
 			Title: "Animated bullets",
 			Steps: ui.Steps{
 				{
 					Name:   "Building..",
-					Bullet: ui.Running,
-					BulletAnimationFunc: func(b string, frame int) string {
-						assert.DeepEqual(t, b, "►")
-
-						return []string{
-							"1", "2", "3",
-						}[frame]
-					},
+					Bullet: ui.Bullet{"1", "2", "3"},
 				},
 			},
 			Expect: withoutPadding(`
@@ -118,6 +92,9 @@ func TestSteps(t *testing.T) {
 				withoutPadding(`
 				 3  Building..
 				`),
+				withoutPadding(`
+				 1  Building..
+				`), // wrap around
 			},
 		},
 	}

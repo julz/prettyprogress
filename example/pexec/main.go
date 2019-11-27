@@ -2,6 +2,7 @@ package main
 
 import (
 	"os/exec"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
@@ -15,10 +16,14 @@ func main() {
 	w.Start()
 	defer w.Stop()
 
+	bullets := ui.AnimatedBulletSet
+	bullets.Running = bullets.Running.WithColor(color.New(color.FgGreen))
+
 	steps := prettyprogress.NewMultistep(
 		prettyprogress.Writeln(w),
-		prettyprogress.WithBulletColor(
-			ui.Complete, color.New(color.FgGreen).Sprint,
+		prettyprogress.WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
+		prettyprogress.WithBullets(
+			bullets,
 		),
 	)
 

@@ -35,9 +35,7 @@ func (p Steps) AnimatedString(frame int) string {
 // Step represents a single step
 // It is formatted as `$Bullet $Name $Bar` with appropriate spacing
 type Step struct {
-	Bullet              fmt.Stringer
-	BulletColorFunc     func(...interface{}) string
-	BulletAnimationFunc func(b string, frame int) string
+	Bullet Bullet
 
 	Name string
 
@@ -57,35 +55,11 @@ func (s Step) AnimatedString(frame int) string {
 		s.paddedName = s.Name
 	}
 
-	bullet := s.Bullet.String()
-	if s.BulletColorFunc != nil {
-		bullet = s.BulletColorFunc(s.Bullet.String())
-	}
-
-	if s.BulletAnimationFunc != nil {
-		bullet = s.BulletAnimationFunc(bullet, frame)
-	}
-
 	name := s.Name
 	if s.Bar != "" {
 		name = s.paddedName + "   "
 	}
 
+	bullet := s.Bullet[frame%len(s.Bullet)]
 	return fmt.Sprintf(" %s  %s%s", bullet, name, s.Bar)
-}
-
-// Bullet is a unicode status icon for a Step
-type Bullet string
-
-const (
-	Failed      Bullet = "✗"
-	Future      Bullet = " "
-	Running     Bullet = "►"
-	Downloading Bullet = "↡"
-	Uploading   Bullet = "↟"
-	Complete    Bullet = "✓"
-)
-
-func (b Bullet) String() string {
-	return string(b)
 }

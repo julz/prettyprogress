@@ -1,16 +1,18 @@
 package prettyprogress
 
-import "github.com/julz/prettyprogress/ui"
+import (
+	"github.com/julz/prettyprogress/ui"
+)
 
 // Step is an updater whose watcher recieves the output of
 // ui.Step's String() method whenever its UpdateStatus method is
 // called
 type Step struct {
-	bulletColors map[string]func(a ...interface{}) string
-
 	barWidth int
 	barTotal int
 	barLabel ui.LabelFunc
+
+	bullets ui.BulletSet
 
 	watcher stepWatcher
 }
@@ -22,24 +24,25 @@ func NewStep(barTotal, barWidth int, w Watcher) *Step {
 	return &Step{
 		barWidth: barWidth,
 		barTotal: barTotal,
+		bullets:  ui.DefaultBulletSet,
 		watcher:  func(s ui.Step) { w(s.String()) },
 	}
 }
 
 // Fail sets the steps name to the given string and changes the bullet to a symbol indicating failure
 func (b *Step) Fail(msg string) {
-	b.Update(ui.Failed, msg)
+	b.Update(b.bullets.Failed, msg)
 }
 
 // Complete sets the steps name to the given string and changes the bullet to a
 // symbol indicating the task has been completed
 func (b *Step) Complete(msg string) {
-	b.Update(ui.Complete, msg)
+	b.Update(b.bullets.Complete, msg)
 }
 
 // Start sets the steps name to the given string and changes the bullet to a symbol indicating the task is running
 func (b *Step) Start(msg string) {
-	b.Update(ui.Running, msg)
+	b.Update(b.bullets.Running, msg)
 }
 
 // Update sets the steps name to the givem status and updated the bullet to the given Bullet
@@ -86,9 +89,8 @@ func (b *Step) UpdateWithProgress(bullet ui.Bullet, status string, progress int)
 
 func (b *Step) update(bullet ui.Bullet, status, bar string) {
 	b.watcher(ui.Step{
-		Bullet:          bullet,
-		BulletColorFunc: b.bulletColors[bullet.String()],
-		Name:            status,
-		Bar:             bar,
+		Bullet: bullet,
+		Name:   status,
+		Bar:    bar,
 	})
 }
