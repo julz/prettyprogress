@@ -17,41 +17,48 @@ func main() {
 	bullets := ui.AnimatedBulletSet
 	bullets.Running = bullets.Running.WithColor(color.New(color.FgGreen))
 
+	gray := color.New(color.FgHiBlack)
 	multiStep := prettyprogress.NewMultistep(
 		prettyprogress.Writeln(w),
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
 		prettyprogress.WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
+		prettyprogress.WithLabelColors(prettyprogress.Colors{
+			Future:    gray.Sprint,
+			Completed: gray.Sprint,
+		}),
 		prettyprogress.WithBullets(
 			bullets,
 		),
 	)
 
 	step1 := multiStep.AddStep("Download", 1000)
-	step2 := multiStep.AddStep("Some Action", 0)
+	step2 := multiStep.AddStep("Run Something", 0)
 	step3 := multiStep.AddStep("Upload", 800)
-
-	step2.Start("Running Something..")
 
 	ch := make(chan struct{})
 	go func() {
-		time.Sleep(400 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 		doSomethingWithProgress(step1.Bar(ui.Downloading, "Downloading.."))
-		step1.Complete("Download done")
+		step1.Complete("Download Done")
 		close(ch)
 	}()
 
-	doSomethingWithProgress(step3.Bar(ui.Uploading, "Uploading.."))
-	step3.Complete("Upload complete")
+	time.Sleep(1600 * time.Millisecond)
+	step2.Start("Running Something..")
 
-	time.Sleep(600 * time.Millisecond)
+	doSomethingWithProgress(step3.Bar(ui.Uploading, "Uploading.."))
+	step3.Complete("Upload Complete")
+
+	time.Sleep(200 * time.Millisecond)
 	step2.Complete("Some Action Done")
 
 	<-ch
 }
 
 func doSomethingWithProgress(bar interface{ Update(int) }) {
-	for i := 0; i <= 1010; i++ {
+	time.Sleep(300 * time.Millisecond)
+	for i := 0; i <= 1000; i++ {
 		bar.Update(i)
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 }

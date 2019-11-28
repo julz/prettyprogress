@@ -1,6 +1,7 @@
 package prettyprogress
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -15,6 +16,7 @@ type Steps struct {
 	barWidth int
 	barLabel ui.LabelFunc
 	bullets  ui.BulletSet
+	colors   Colors
 
 	frame         int
 	frameMu       sync.RWMutex
@@ -31,6 +33,7 @@ func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 		barWidth: 20,
 		bullets:  ui.DefaultBulletSet,
 		watcher:  watcher,
+		colors:   DefaultColors,
 	}
 
 	for _, option := range options {
@@ -61,24 +64,20 @@ func (p *Steps) AddStep(name string, barTotal int) *Step {
 		barTotal = 100
 	}
 
-	s := &Step{
-		barWidth: p.barWidth,
-		barLabel: p.barLabel,
-		barTotal: barTotal,
+	s := NewStep(barTotal, p.barWidth, nil)
+	s.barLabel = p.barLabel
+	s.bullets = p.bullets
+	s.colors = p.colors
+	s.watcher = func(s ui.Step) {
+		p.mu.Lock()
+		defer p.mu.Unlock()
 
-		bullets: p.bullets,
-
-		watcher: func(s ui.Step) {
-			p.mu.Lock()
-			defer p.mu.Unlock()
-
-			p.steps[stepIndex] = s
-			p.refresh()
-		},
+		p.steps[stepIndex] = s
+		p.refresh()
 	}
 
 	if name != "" {
-		s.update(ui.Future, name, "")
+		s.update(ui.Future, p.colors.Future(name), "")
 	}
 
 	return s
@@ -114,5 +113,21 @@ func WithBullets(b ui.BulletSet) func(*Steps) {
 func WithAnimationFrameTicker(c <-chan time.Time) func(*Steps) {
 	return func(s *Steps) {
 		s.frameTickerCh = c
+	}
+}
+
+type Colors struct {
+	Future    func(s ...interface{}) string
+	Completed func(s ...interface{}) string
+}
+
+var DefaultColors = Colors{
+	Future:    func(s ...interface{}) string { return fmt.Sprintf("%s", s...) },
+	Completed: func(s ...interface{}) string { return fmt.Sprintf("%s", s...) },
+}
+
+func WithLabelColors(colors Colors) func(*Steps) {
+	return func(s *Steps) {
+		s.colors = colors
 	}
 }

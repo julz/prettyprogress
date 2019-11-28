@@ -13,6 +13,7 @@ type Step struct {
 	barLabel ui.LabelFunc
 
 	bullets ui.BulletSet
+	colors  Colors
 
 	watcher stepWatcher
 }
@@ -25,6 +26,7 @@ func NewStep(barTotal, barWidth int, w Watcher) *Step {
 		barWidth: barWidth,
 		barTotal: barTotal,
 		bullets:  ui.DefaultBulletSet,
+		colors:   DefaultColors,
 		watcher:  func(s ui.Step) { w(s.String()) },
 	}
 }
@@ -37,7 +39,7 @@ func (b *Step) Fail(msg string) {
 // Complete sets the steps name to the given string and changes the bullet to a
 // symbol indicating the task has been completed
 func (b *Step) Complete(msg string) {
-	b.Update(b.bullets.Complete, msg)
+	b.Update(b.bullets.Complete, b.colors.Completed(msg))
 }
 
 // Start sets the steps name to the given string and changes the bullet to a symbol indicating the task is running

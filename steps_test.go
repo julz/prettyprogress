@@ -1,6 +1,7 @@
 package prettyprogress_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -20,16 +21,30 @@ func TestMultistep(t *testing.T) {
 		},
 		prettyprogress.WithBarWidth(20),
 		prettyprogress.WithBullets(bullets),
+		prettyprogress.WithLabelColors(prettyprogress.Colors{
+			Future:    func(s ...interface{}) string { return fmt.Sprintf("FUTURE<%s>", s...) },
+			Completed: func(s ...interface{}) string { return fmt.Sprintf("COMPLETED<%s>", s...) },
+		}),
 	)
 
 	step1 := steps.AddStep("", 100)
-	step2 := steps.AddStep("", 0)
+	step2 := steps.AddStep("future", 0)
 
 	step1.Start("hello")
-	step2.Update(ui.Complete, "bye")
+	step2.Complete("bye")
 	step1.UpdateWithProgress(ui.Downloading, "updated", 12)
 
 	assert.DeepEqual(t, recieved, []string{
+		ui.Steps{
+			{
+				Bullet: ui.Future,
+				Name:   "",
+			},
+			{
+				Bullet: ui.Future,
+				Name:   "FUTURE<future>",
+			},
+		}.String(),
 		ui.Steps{
 			{
 				Bullet: ui.Bullet{"OVERRIDDEN"},
@@ -37,7 +52,7 @@ func TestMultistep(t *testing.T) {
 			},
 			{
 				Bullet: ui.Future,
-				Name:   "",
+				Name:   "FUTURE<future>",
 			},
 		}.String(),
 		ui.Steps{
@@ -47,7 +62,7 @@ func TestMultistep(t *testing.T) {
 			},
 			{
 				Bullet: ui.Complete,
-				Name:   "bye",
+				Name:   "COMPLETED<bye>",
 			},
 		}.String(),
 		ui.Steps{
@@ -58,7 +73,7 @@ func TestMultistep(t *testing.T) {
 			},
 			{
 				Bullet: ui.Complete,
-				Name:   "bye",
+				Name:   "COMPLETED<bye>",
 			},
 		}.String(),
 	})
