@@ -23,7 +23,7 @@ type Steps struct {
 	frameMu       sync.RWMutex
 	frameTickerCh <-chan time.Time
 
-	mu    sync.Mutex
+	mu    sync.RWMutex
 	steps ui.Steps
 }
 
@@ -87,9 +87,9 @@ func (p *Steps) AddStep(name string, barTotal int) *Step {
 	s.colors = p.colors
 	s.watcher = func(s ui.Step) {
 		p.mu.Lock()
-		defer p.mu.Unlock()
-
 		p.steps[stepIndex] = s
+		p.mu.Unlock()
+
 		p.refresh()
 	}
 
@@ -103,6 +103,9 @@ func (p *Steps) AddStep(name string, barTotal int) *Step {
 func (p *Steps) refresh() {
 	p.frameMu.RLock()
 	defer p.frameMu.RUnlock()
+
+	p.mu.RLock()
+	defer p.mu.RUnlock()
 
 	p.printFunc(p.steps.AnimatedString(p.frame))
 }
