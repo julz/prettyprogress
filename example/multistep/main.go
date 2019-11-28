@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
 	"github.com/julz/prettyprogress/ui"
@@ -14,21 +13,9 @@ func main() {
 	w.Start()
 	defer w.Stop()
 
-	bullets := ui.AnimatedBulletSet
-	bullets.Running = bullets.Running.WithColor(color.New(color.FgGreen))
-
-	gray := color.New(color.FgHiBlack)
-	multiStep := prettyprogress.NewMultistep(
+	multiStep := prettyprogress.NewFancyMultistep(
 		prettyprogress.Writeln(w),
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
-		prettyprogress.WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
-		prettyprogress.WithLabelColors(prettyprogress.Colors{
-			Future:    gray.Sprint,
-			Completed: gray.Sprint,
-		}),
-		prettyprogress.WithBullets(
-			bullets,
-		),
 	)
 
 	step1 := multiStep.AddStep("Download", 1000)

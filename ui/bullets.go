@@ -1,5 +1,7 @@
 package ui
 
+import "github.com/fatih/color"
+
 // Bullet is a unicode status icon for a Step
 type Bullet []string
 
@@ -41,6 +43,15 @@ var AnimatedBulletSet = BulletSet{
 	Failed:      Failed,
 	Future:      Future,
 	Running:     AnimatedRunning6,
+	Downloading: Downloading,
+	Uploading:   Uploading,
+	Complete:    Complete,
+}
+
+var ColoredAnimatedBulletSet = BulletSet{
+	Failed:      Failed.WithColor(color.New(color.FgRed)),
+	Future:      Future,
+	Running:     AnimatedRunning6.WithColor(color.New(color.FgGreen)),
 	Downloading: Downloading,
 	Uploading:   Uploading,
 	Complete:    Complete,

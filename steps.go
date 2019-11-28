@@ -5,13 +5,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/julz/prettyprogress/ui"
 )
 
 const defaultBarTotal = 100
 
 type Steps struct {
-	watcher Watcher
+	printFunc PrintFunc
 
 	barWidth int
 	barLabel ui.LabelFunc
@@ -26,14 +27,18 @@ type Steps struct {
 	steps ui.Steps
 }
 
+// PrintFunc is a function that is called when new versions of a Bar, Step or Multistep
+// are created as a result of calling UpdateX methods.
+type PrintFunc func(s string)
+
 // NewMultistep creates a new updater that can have multiple sub-steps. When any of the steps
 // are updated, the Watcher is called with the new string to display.
-func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
+func NewMultistep(print PrintFunc, options ...StepsOption) *Steps {
 	s := &Steps{
-		barWidth: 20,
-		bullets:  ui.DefaultBulletSet,
-		watcher:  watcher,
-		colors:   DefaultColors,
+		barWidth:  20,
+		bullets:   ui.DefaultBulletSet,
+		printFunc: print,
+		colors:    DefaultColors,
 	}
 
 	for _, option := range options {
@@ -51,6 +56,18 @@ func NewMultistep(watcher Watcher, options ...StepsOption) *Steps {
 	}()
 
 	return s
+}
+
+// NewFancyMultistep creates a new updater that prints step progress with fancy
+// colours, bullets and animations using the given Watcher
+func NewFancyMultistep(printFunc PrintFunc, extraOptions ...StepsOption) *Steps {
+	return NewMultistep(printFunc,
+		WithBullets(ui.ColoredAnimatedBulletSet),
+		WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
+		WithLabelColors(Colors{
+			Future:    color.New(color.FgHiBlack).Sprint,
+			Completed: color.New(color.FgHiBlack).Sprint,
+		}))
 }
 
 // AddStep adds a sub-step to the display
@@ -87,7 +104,7 @@ func (p *Steps) refresh() {
 	p.frameMu.RLock()
 	defer p.frameMu.RUnlock()
 
-	p.watcher(p.steps.AnimatedString(p.frame))
+	p.printFunc(p.steps.AnimatedString(p.frame))
 }
 
 type StepsOption func(s *Steps)
@@ -116,6 +133,12 @@ func WithAnimationFrameTicker(c <-chan time.Time) func(*Steps) {
 	}
 }
 
+func WithLabelColors(colors Colors) func(*Steps) {
+	return func(s *Steps) {
+		s.colors = colors
+	}
+}
+
 type Colors struct {
 	Future    func(s ...interface{}) string
 	Completed func(s ...interface{}) string
@@ -124,10 +147,4 @@ type Colors struct {
 var DefaultColors = Colors{
 	Future:    func(s ...interface{}) string { return fmt.Sprintf("%s", s...) },
 	Completed: func(s ...interface{}) string { return fmt.Sprintf("%s", s...) },
-}
-
-func WithLabelColors(colors Colors) func(*Steps) {
-	return func(s *Steps) {
-		s.colors = colors
-	}
 }

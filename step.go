@@ -21,13 +21,13 @@ type Step struct {
 type stepWatcher func(s ui.Step)
 
 // NewStep creates a new Step which can be updated with the status of a single task
-func NewStep(barTotal, barWidth int, w Watcher) *Step {
+func NewStep(barTotal, barWidth int, print PrintFunc) *Step {
 	return &Step{
 		barWidth: barWidth,
 		barTotal: barTotal,
 		bullets:  ui.DefaultBulletSet,
 		colors:   DefaultColors,
-		watcher:  func(s ui.Step) { w(s.String()) },
+		watcher:  func(s ui.Step) { print(s.String()) },
 	}
 }
 
@@ -72,7 +72,7 @@ func (b *Step) Bar(bullet ui.Bullet, status string) *Bar {
 		total: b.barTotal,
 		width: b.barWidth,
 		label: b.barLabel,
-		watcher: func(s string) {
+		printFunc: func(s string) {
 			b.update(bullet, status, s)
 		},
 	}
