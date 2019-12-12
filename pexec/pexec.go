@@ -9,28 +9,34 @@ import (
 )
 
 type Updater interface {
-	Update(bullet ui.Bullet, status string)
+	UpdateState(state ui.BulletState, status string)
 }
 
 type Cmd struct {
 	cmd     *exec.Cmd
+	name    string
 	updater Updater
 }
 
 func Wrap(cmd *exec.Cmd, u Updater) *Cmd {
+	return Wrapn(strings.Join(cmd.Args, " "), cmd, u)
+}
+
+func Wrapn(name string, cmd *exec.Cmd, u Updater) *Cmd {
 	c := &Cmd{
 		cmd:     cmd,
 		updater: u,
+		name:    name,
 	}
 
-	u.Update(ui.Future, fmt.Sprintf("Run '%s'", strings.Join(cmd.Args, " ")))
+	u.UpdateState("", fmt.Sprintf("Waiting to Run '%s'", name))
 	return c
 }
 
 func (c *Cmd) Run() error {
-	c.updater.Update(ui.Running, fmt.Sprintf("Running '%s'..", strings.Join(c.cmd.Args, " ")))
+	c.updater.UpdateState(ui.RunningState, fmt.Sprintf("Running '%s'..", c.name))
 	err := c.cmd.Run()
-	c.updater.Update(ui.Complete, fmt.Sprintf("Finished '%s'", strings.Join(c.cmd.Args, " ")))
+	c.updater.UpdateState(ui.CompleteState, fmt.Sprintf("Finished '%s'", c.name))
 
 	return err
 }

@@ -18,39 +18,4 @@ func Example() {
 	step1.Run()
 	step2.Run()
 	step3.Run()
-
-	// Output:
-	//
-	//     Run 'echo step1'
-	//
-	//     Run 'echo step1'
-	//     Run 'echo step2'
-	//
-	//     Run 'echo step1'
-	//     Run 'echo step2'
-	//     Run 'echo step3'
-	//
-	//  ►  Running 'echo step1'..
-	//     Run 'echo step2'
-	//     Run 'echo step3'
-	//
-	//  ✓  Finished 'echo step1'
-	//     Run 'echo step2'
-	//     Run 'echo step3'
-	//
-	//  ✓  Finished 'echo step1'
-	//  ►  Running 'echo step2'..
-	//     Run 'echo step3'
-	//
-	//  ✓  Finished 'echo step1'
-	//  ✓  Finished 'echo step2'
-	//     Run 'echo step3'
-	//
-	//  ✓  Finished 'echo step1'
-	//  ✓  Finished 'echo step2'
-	//  ►  Running 'echo step3'..
-	//
-	//  ✓  Finished 'echo step1'
-	//  ✓  Finished 'echo step2'
-	//  ✓  Finished 'echo step3'
 }

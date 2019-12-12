@@ -47,6 +47,20 @@ func (b *Step) Start(msg string) {
 	b.Update(b.bullets.Running, msg)
 }
 
+// UpdateState updates the step with the given status and the bullet from the current BulletSet corresponding to the given state
+func (b *Step) UpdateState(state ui.BulletState, status string) {
+	switch state {
+	case ui.RunningState:
+		b.Start(status)
+	case ui.CompleteState:
+		b.Complete(status)
+	case ui.FailedState:
+		b.Fail(status)
+	default:
+		b.update(ui.Future, status, "")
+	}
+}
+
 // Update sets the steps name to the givem status and updated the bullet to the given Bullet
 func (b *Step) Update(bullet ui.Bullet, status string) {
 	b.update(bullet, status, "")

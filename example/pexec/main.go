@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/julz/prettyprogress/ui"
 )
 
+//  e.g. `go run example/pexec/main.go "sleep 1" "echo hello" "sleep 2"`
 func main() {
 	w := uilive.New()
 	w.Start()
@@ -27,11 +29,17 @@ func main() {
 		),
 	)
 
-	step1 := pexec.Wrap(exec.Command("bash", "-c", "sleep 2; echo hello"), steps.AddStep("", 0))
-	step2 := pexec.Wrap(exec.Command("bash", "-c", "sleep 3; echo hello"), steps.AddStep("", 0))
-	step3 := pexec.Wrap(exec.Command("bash", "-c", "sleep 1; echo hello"), steps.AddStep("", 0))
+	args := []string{}
+	if len(os.Args) > 1 {
+		args = os.Args[1:]
+	}
 
-	go step3.Run()
-	step1.Run()
-	step2.Run()
+	cmds := []*pexec.Cmd{}
+	for _, a := range args {
+		cmds = append(cmds, pexec.Wrapn(a, exec.Command("sh", "-c", a), steps.AddStep("", 0)))
+	}
+
+	for _, cmd := range cmds {
+		cmd.Run()
+	}
 }

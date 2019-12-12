@@ -5,7 +5,13 @@ import "github.com/fatih/color"
 // Bullet is a unicode status icon for a Step
 type Bullet []string
 
+type BulletState string
+
 var (
+	RunningState  BulletState = "Running"
+	CompleteState BulletState = "Complete"
+	FailedState   BulletState = "Failed"
+
 	Failed      Bullet = []string{"✗"}
 	Future      Bullet = []string{" "}
 	Running     Bullet = []string{"►"}

@@ -13,7 +13,7 @@ func TestPexec(t *testing.T) {
 	var updates []updateArgs
 	echo := exec.Command("echo", "hello")
 	cmd := pexec.Wrap(echo, updater{
-		UpdateFunc: func(bullet ui.Bullet, status string) {
+		UpdateFunc: func(bullet ui.BulletState, status string) {
 			updates = append(updates, updateArgs{
 				Bullet: bullet,
 				Status: status,
@@ -23,8 +23,7 @@ func TestPexec(t *testing.T) {
 
 	assert.DeepEqual(t, updates, []updateArgs{
 		{
-			Bullet: ui.Future,
-			Status: "Run 'echo hello'",
+			Status: "Waiting to Run 'echo hello'",
 		},
 	})
 
@@ -34,29 +33,28 @@ func TestPexec(t *testing.T) {
 
 	assert.DeepEqual(t, updates, []updateArgs{
 		{
-			Bullet: ui.Future,
-			Status: "Run 'echo hello'",
+			Status: "Waiting to Run 'echo hello'",
 		},
 		{
-			Bullet: ui.Running,
+			Bullet: ui.RunningState,
 			Status: "Running 'echo hello'..",
 		},
 		{
-			Bullet: ui.Complete,
+			Bullet: ui.CompleteState,
 			Status: "Finished 'echo hello'",
 		},
 	})
 }
 
 type updateArgs struct {
-	Bullet ui.Bullet
+	Bullet ui.BulletState
 	Status string
 }
 
 type updater struct {
-	UpdateFunc func(bullet ui.Bullet, status string)
+	UpdateFunc func(bullet ui.BulletState, status string)
 }
 
-func (u updater) Update(bullet ui.Bullet, status string) {
+func (u updater) UpdateState(bullet ui.BulletState, status string) {
 	u.UpdateFunc(bullet, status)
 }

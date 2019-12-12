@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
 	"github.com/julz/prettyprogress"
 	"github.com/julz/prettyprogress/ui"
@@ -33,11 +34,22 @@ func main() {
 	time.Sleep(1600 * time.Millisecond)
 	step2.Start("Running Something..")
 
+	failed := multiStep.AddStep("Waiting to fail", 0)
 	doSomethingWithProgress(step3.Bar(ui.Uploading, "Uploading.."))
 	step3.Complete("Upload Complete")
 
 	time.Sleep(200 * time.Millisecond)
 	step2.Complete("Some Action Done")
+
+	time.Sleep(600 * time.Millisecond)
+	failed.Start("Failing..")
+	time.Sleep(400 * time.Millisecond)
+	failed.Fail("Something failed!")
+
+	cancel := multiStep.AddStep("", 0)
+	cancel.Start("Cancelled")
+	time.Sleep(500 * time.Millisecond)
+	cancel.Update(ui.Complete, color.New(color.FgYellow).Sprint("Cancelled")) // override default colors
 
 	<-ch
 }
