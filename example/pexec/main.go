@@ -22,7 +22,7 @@ func main() {
 	bullets.Running = bullets.Running.WithColor(color.New(color.FgGreen))
 
 	steps := prettyprogress.NewMultistep(
-		prettyprogress.Writeln(w),
+		w,
 		prettyprogress.WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
 		prettyprogress.WithBullets(
 			bullets,

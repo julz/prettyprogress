@@ -2,6 +2,7 @@ package prettyprogress
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"time"
 
@@ -31,14 +32,23 @@ type Steps struct {
 // are created as a result of calling UpdateX methods.
 type PrintFunc func(s string)
 
+type flusher interface {
+	Flush() error
+}
+
 // NewMultistep creates a new updater that can have multiple sub-steps. When any of the steps
-// are updated, the Watcher is called with the new string to display.
-func NewMultistep(print PrintFunc, options ...StepsOption) *Steps {
+// are updated, the Writer is called with the new string to display.
+func NewMultistep(writer io.Writer, options ...StepsOption) *Steps {
 	s := &Steps{
-		barWidth:  20,
-		bullets:   ui.DefaultBulletSet,
-		printFunc: print,
-		colors:    DefaultColors,
+		barWidth: 20,
+		bullets:  ui.DefaultBulletSet,
+		printFunc: func(w string) {
+			writer.Write([]byte(w))
+			if writer, ok := writer.(flusher); ok {
+				writer.Flush()
+			}
+		},
+		colors: DefaultColors,
 	}
 
 	for _, option := range options {
@@ -60,8 +70,8 @@ func NewMultistep(print PrintFunc, options ...StepsOption) *Steps {
 
 // NewFancyMultistep creates a new updater that prints step progress with fancy
 // colours, bullets and animations using the given Watcher
-func NewFancyMultistep(printFunc PrintFunc, extraOptions ...StepsOption) *Steps {
-	return NewMultistep(printFunc,
+func NewFancyMultistep(writer io.Writer, extraOptions ...StepsOption) *Steps {
+	return NewMultistep(writer,
 		WithBullets(ui.ColoredAnimatedBulletSet),
 		WithAnimationFrameTicker(time.NewTicker(200*time.Millisecond).C),
 		WithLabelColors(Colors{

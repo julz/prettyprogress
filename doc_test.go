@@ -10,10 +10,10 @@ import (
 
 func Example() {
 	multiStep := prettyprogress.NewMultistep(
-		func(s string) {
+		writer(func(s string) {
 			fmt.Println("---")
 			fmt.Println(s)
-		},
+		}),
 		prettyprogress.WithBarWidth(5),
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
 	)

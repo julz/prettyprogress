@@ -16,9 +16,9 @@ func TestMultistep(t *testing.T) {
 
 	var recieved []string
 	steps := prettyprogress.NewMultistep(
-		func(s string) {
+		writer(func(s string) {
 			recieved = append(recieved, s)
-		},
+		}),
 		prettyprogress.WithBarWidth(20),
 		prettyprogress.WithBullets(bullets),
 		prettyprogress.WithLabelColors(prettyprogress.Colors{
@@ -88,9 +88,9 @@ func TestMultistepAnimations(t *testing.T) {
 
 	var recieved []string
 	steps := prettyprogress.NewMultistep(
-		func(s string) {
+		writer(func(s string) {
 			recieved = append(recieved, s)
-		},
+		}),
 		prettyprogress.WithBarWidth(20),
 		prettyprogress.WithBullets(bullets),
 		prettyprogress.WithAnimationFrameTicker(c),
@@ -182,4 +182,11 @@ func TestMultistepAnimations(t *testing.T) {
 		}.String(),
 	})
 
+}
+
+type writer func(w string)
+
+func (fn writer) Write(b []byte) (n int, e error) {
+	fn(string(b))
+	return 0, nil
 }

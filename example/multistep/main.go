@@ -15,7 +15,7 @@ func main() {
 	defer w.Stop()
 
 	multiStep := prettyprogress.NewFancyMultistep(
-		prettyprogress.Writeln(w),
+		w,
 		prettyprogress.WithBarLabel(ui.PercentageLabel),
 	)
 
